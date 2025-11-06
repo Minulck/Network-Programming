@@ -103,7 +103,16 @@ public class Server {
                 if (path.equals("/")) path = "/dashboard.html";
                 File file = new File("client" + path);
                 if (file.exists()) {
+                    // Set proper content type with UTF-8 encoding
+                    String contentType = "text/html; charset=UTF-8";
+                    if (path.endsWith(".css")) {
+                        contentType = "text/css; charset=UTF-8";
+                    } else if (path.endsWith(".js")) {
+                        contentType = "application/javascript; charset=UTF-8";
+                    }
+                    exchange.getResponseHeaders().set("Content-Type", contentType);
                     exchange.sendResponseHeaders(200, file.length());
+                    
                     try (FileInputStream fis = new FileInputStream(file);
                          OutputStream os = exchange.getResponseBody()) {
                         byte[] buffer = new byte[1024];
