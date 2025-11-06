@@ -131,7 +131,7 @@
   </head>
   <body>
     <div id="login" style="display: block">
-      <h1>🎯 BidEasy - Real-Time Auction System</h1>
+      <h1>&#127919; BidEasy - Real-Time Auction System</h1>
       <form id="loginForm">
         <h2>Welcome! Please Login</h2>
         <input
@@ -146,7 +146,7 @@
 
     <div id="main" style="display: none">
       <div class="user-info">
-        <h1>🎯 BidEasy Dashboard</h1>
+        <h1>&#127919; BidEasy Dashboard</h1>
         <p>
           Welcome, <strong id="currentUser"></strong>! | Status:
           <span id="connectionStatus" class="status-offline">Offline</span>
@@ -155,16 +155,16 @@
 
       <div class="tabs">
         <button class="tab active" onclick="openTab(event, 'auctionList')">
-          🏆 Active Auctions
+          &#127942; Active Auctions
         </button>
         <button class="tab" onclick="openTab(event, 'createAuction')">
-          ➕ Create Auction
+          &#10133; Create Auction
         </button>
         <button class="tab" onclick="openTab(event, 'placeBid')">
-          💰 Place Bid
+          &#128176; Place Bid
         </button>
         <button class="tab" onclick="openTab(event, 'myActivity')">
-          📊 My Activity
+          &#128202; My Activity
         </button>
       </div>
 
@@ -205,7 +205,7 @@
               placeholder="60"
               required /></label
           ><br />
-          <button type="submit">🚀 Create Auction</button>
+          <button type="submit">&#128640; Create Auction</button>
         </form>
         <div id="createMessage"></div>
       </div>
@@ -226,7 +226,7 @@
               min="0.01"
               required /></label
           ><br />
-          <button type="submit">💰 Place Bid</button>
+          <button type="submit">&#128176; Place Bid</button>
         </form>
         <div id="bidMessage"></div>
       </div>
@@ -429,7 +429,7 @@
           // Remove quick bid buttons
           const quickBidDiv = div.querySelector(".quick-bid");
           if (quickBidDiv)
-            quickBidDiv.innerHTML = `<p><strong>🏆 Winner:</strong> ${winner} | <strong>Final Price:</strong> $${price}</p>`;
+            quickBidDiv.innerHTML = `<p><strong>&#127942; Winner:</strong> ${winner} | <strong>Final Price:</strong> $${price}</p>`;
 
           if (winner === username) {
             showNotification(
@@ -532,7 +532,7 @@
           html += "<p>You haven't created any auctions yet.</p>";
         } else {
           myAuctions.forEach((auction, index) => {
-            html += `<p>📝 ${auction.name} - Starting at $${auction.price} for ${auction.duration}s</p>`;
+            html += `<p>&#128221; ${auction.name} - Starting at $${auction.price} for ${auction.duration}s</p>`;
           });
         }
 
@@ -541,7 +541,7 @@
           html += "<p>You haven't placed any bids yet.</p>";
         } else {
           myBids.forEach((bid, index) => {
-            html += `<p>💰 Bid $${bid.amount} on auction #${bid.id}</p>`;
+            html += `<p>&#128176; Bid $${bid.amount} on auction #${bid.id}</p>`;
           });
         }
 
