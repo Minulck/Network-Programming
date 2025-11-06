@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>BidEasy - Real-Time Auction System</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .tabs {
+        display: flex;
+        background-color: #f1f1f1;
+        border-bottom: 1px solid #ccc;
+        margin-bottom: 20px;
+      }
+
+      .tab {
+        background-color: inherit;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+        font-size: 16px;
+      }
+
+      .tab:hover {
+        background-color: #ddd;
+      }
+
+      .tab.active {
+        background-color: #28a745;
+        color: white;
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .user-info {
+        background: #e9ecef;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+
+      .auction {
+        border: 1px solid #ddd;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 8px;
+        background: white;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .auction.ended {
+        background: #f8f9fa;
+        border-left: 5px solid #dc3545;
+      }
+
+      .auction-header {
+        font-size: 18px;
+        font-weight: bold;
+        color: #28a745;
+        margin-bottom: 10px;
+      }
+
+      .auction-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .bid-button {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+
+      .bid-button:hover {
+        background: #0056b3;
+      }
+
+      .status-online {
+        color: #28a745;
+        font-weight: bold;
+      }
+
+      .status-offline {
+        color: #dc3545;
+        font-weight: bold;
+      }
+
+      .quick-bid {
+        display: inline-block;
+        margin: 5px;
+      }
+
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px;
+        border-radius: 5px;
+        color: white;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .notification.success {
+        background: #28a745;
+      }
+
+      .notification.error {
+        background: #dc3545;
+      }
+
+      .notification.show {
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="login" style="display: block">
+      <h1>🎯 BidEasy - Real-Time Auction System</h1>
+      <form id="loginForm">
+        <h2>Welcome! Please Login</h2>
+        <input
+          type="text"
+          id="username"
+          placeholder="Enter your username"
+          required
+        />
+        <button type="submit">Join Auction House</button>
+      </form>
+    </div>
+
+    <div id="main" style="display: none">
+      <div class="user-info">
+        <h1>🎯 BidEasy Dashboard</h1>
+        <p>
+          Welcome, <strong id="currentUser"></strong>! | Status:
+          <span id="connectionStatus" class="status-offline">Offline</span>
+        </p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" onclick="openTab(event, 'auctionList')">
+          🏆 Active Auctions
+        </button>
+        <button class="tab" onclick="openTab(event, 'createAuction')">
+          ➕ Create Auction
+        </button>
+        <button class="tab" onclick="openTab(event, 'placeBid')">
+          💰 Place Bid
+        </button>
+        <button class="tab" onclick="openTab(event, 'myActivity')">
+          📊 My Activity
+        </button>
+      </div>
+
+      <div id="auctionList" class="tab-content active">
+        <h2>Active Auctions</h2>
+        <div id="auctions">
+          <p>No active auctions. Be the first to create one!</p>
+        </div>
+      </div>
+
+      <div id="createAuction" class="tab-content">
+        <h2>Create New Auction</h2>
+        <form id="createForm">
+          <label
+            >Auction Name:
+            <input
+              type="text"
+              id="name"
+              placeholder="e.g., iPhone 15 Pro"
+              required /></label
+          ><br />
+          <label
+            >Starting Price ($):
+            <input
+              type="number"
+              id="price"
+              step="0.01"
+              min="0.01"
+              placeholder="0.01"
+              required /></label
+          ><br />
+          <label
+            >Duration (seconds):
+            <input
+              type="number"
+              id="duration"
+              min="10"
+              placeholder="60"
+              required /></label
+          ><br />
+          <button type="submit">🚀 Create Auction</button>
+        </form>
+        <div id="createMessage"></div>
+      </div>
+
+      <div id="placeBid" class="tab-content">
+        <h2>Place Bid</h2>
+        <form id="bidForm">
+          <label
+            >Auction ID:
+            <input type="number" id="bidAuctionId" min="0" required /></label
+          ><br />
+          <label
+            >Your Bid ($):
+            <input
+              type="number"
+              id="bidAmount"
+              step="0.01"
+              min="0.01"
+              required /></label
+          ><br />
+          <button type="submit">💰 Place Bid</button>
+        </form>
+        <div id="bidMessage"></div>
+      </div>
+
+      <div id="myActivity" class="tab-content">
+        <h2>My Activity</h2>
+        <div id="activityLog">
+          <p>Your auction activity will appear here...</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+      let ws;
+      let username;
+      let myAuctions = [];
+      let myBids = [];
+
+      // Login functionality
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          login();
+        });
+
+      function login() {
+        username = document.getElementById("username").value.trim();
+        if (!username) {
+          showNotification("Please enter a username", "error");
+          return;
+        }
+
+        try {
+          ws = new WebSocket("ws://localhost:5001");
+
+          ws.onopen = () => {
+            ws.send("LOGIN|" + username);
+            document.getElementById("connectionStatus").textContent =
+              "Connecting...";
+          };
+
+          ws.onmessage = handleMessage;
+
+          ws.onclose = () => {
+            document.getElementById("connectionStatus").textContent = "Offline";
+            document.getElementById("connectionStatus").className =
+              "status-offline";
+            showNotification(
+              "Connection lost. Please refresh and try again.",
+              "error"
+            );
+          };
+
+          ws.onerror = (error) => {
+            showNotification(
+              "Connection error. Make sure the server is running.",
+              "error"
+            );
+          };
+        } catch (error) {
+          showNotification(
+            "Failed to connect. Make sure the server is running on localhost:5001",
+            "error"
+          );
+        }
+      }
+
+      function handleMessage(event) {
+        const msg = event.data;
+        console.log("Received:", msg);
+
+        if (msg.startsWith("WELCOME|")) {
+          document.getElementById("login").style.display = "none";
+          document.getElementById("main").style.display = "block";
+          document.getElementById("currentUser").textContent = username;
+          document.getElementById("connectionStatus").textContent = "Online";
+          document.getElementById("connectionStatus").className =
+            "status-online";
+          showNotification("Welcome to BidEasy!", "success");
+        } else if (msg.startsWith("NEW_AUCTION|")) {
+          const parts = msg.split("|");
+          addAuction(parts[1], parts[2], parts[3], parts[4]);
+        } else if (msg.startsWith("UPDATE|")) {
+          const parts = msg.split("|");
+          updateAuction(parts[1], parts[2], parts[3]);
+        } else if (msg.startsWith("END|")) {
+          const parts = msg.split("|");
+          endAuction(parts[1], parts[2], parts[3]);
+        } else if (msg.startsWith("ERROR|")) {
+          const errorMsg = msg.split("|")[1];
+          showNotification("Error: " + errorMsg, "error");
+        } else {
+          console.log("Unknown message:", msg);
+        }
+      }
+
+      // Tab functionality
+      function openTab(evt, tabName) {
+        var i, tabcontent, tabs;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].classList.remove("active");
+        }
+        tabs = document.getElementsByClassName("tab");
+        for (i = 0; i < tabs.length; i++) {
+          tabs[i].classList.remove("active");
+        }
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+      }
+
+      // Auction management
+      function addAuction(id, name, price, duration) {
+        const auctionsDiv = document.getElementById("auctions");
+        if (auctionsDiv.innerHTML.includes("No active auctions")) {
+          auctionsDiv.innerHTML = "";
+        }
+
+        const div = document.createElement("div");
+        div.id = "auction-" + id;
+        div.className = "auction";
+        div.innerHTML = `
+          <div class="auction-header">${name}</div>
+          <div class="auction-details">
+            <div><strong>ID:</strong> ${id}</div>
+            <div><strong>Starting Price:</strong> $${price}</div>
+            <div><strong>Current Bid:</strong> $${price}</div>
+            <div><strong>Highest Bidder:</strong> None yet</div>
+            <div><strong>Time Left:</strong> <span id="timer-${id}">${duration}s</span></div>
+            <div><strong>Status:</strong> <span style="color: #28a745;">Active</span></div>
+          </div>
+          <div class="quick-bid">
+            <button class="bid-button" onclick="quickBid(${id}, ${
+          parseFloat(price) + 1
+        })">Quick Bid $${parseFloat(price) + 1}</button>
+            <button class="bid-button" onclick="quickBid(${id}, ${
+          parseFloat(price) + 5
+        })">Quick Bid $${parseFloat(price) + 5}</button>
+          </div>
+        `;
+        auctionsDiv.appendChild(div);
+
+        // Start countdown timer
+        startTimer(id, parseInt(duration));
+
+        showNotification(`New auction: ${name}`, "success");
+      }
+
+      function updateAuction(id, bid, bidder) {
+        const div = document.getElementById("auction-" + id);
+        if (div) {
+          const currentBidElement = div.querySelector(
+            ".auction-details div:nth-child(3)"
+          );
+          const bidderElement = div.querySelector(
+            ".auction-details div:nth-child(4)"
+          );
+          const quickBidButtons = div.querySelectorAll(".bid-button");
+
+          if (currentBidElement)
+            currentBidElement.innerHTML = `<strong>Current Bid:</strong> $${bid}`;
+          if (bidderElement)
+            bidderElement.innerHTML = `<strong>Highest Bidder:</strong> ${bidder}`;
+
+          // Update quick bid buttons
+          quickBidButtons.forEach((button, index) => {
+            const increment = index === 0 ? 1 : 5;
+            const newBid = parseFloat(bid) + increment;
+            button.textContent = `Quick Bid $${newBid}`;
+            button.onclick = () => quickBid(id, newBid);
+          });
+
+          if (bidder === username) {
+            showNotification(
+              `You are now the highest bidder on auction ${id}!`,
+              "success"
+            );
+          } else {
+            showNotification(
+              `New bid on auction ${id}: $${bid} by ${bidder}`,
+              "success"
+            );
+          }
+        }
+      }
+
+      function endAuction(id, winner, price) {
+        const div = document.getElementById("auction-" + id);
+        if (div) {
+          div.className = "auction ended";
+          const statusElement = div.querySelector(
+            ".auction-details div:nth-child(6)"
+          );
+          if (statusElement)
+            statusElement.innerHTML = `<strong>Status:</strong> <span style="color: #dc3545;">Ended</span>`;
+
+          // Remove quick bid buttons
+          const quickBidDiv = div.querySelector(".quick-bid");
+          if (quickBidDiv)
+            quickBidDiv.innerHTML = `<p><strong>🏆 Winner:</strong> ${winner} | <strong>Final Price:</strong> $${price}</p>`;
+
+          if (winner === username) {
+            showNotification(
+              `Congratulations! You won auction ${id} with $${price}!`,
+              "success"
+            );
+          } else {
+            showNotification(
+              `Auction ${id} ended. Winner: ${winner} ($${price})`,
+              "success"
+            );
+          }
+        }
+      }
+
+      function startTimer(auctionId, duration) {
+        let timeLeft = duration;
+        const timerElement = document.getElementById(`timer-${auctionId}`);
+
+        const interval = setInterval(() => {
+          timeLeft--;
+          if (timerElement) {
+            timerElement.textContent = timeLeft + "s";
+            if (timeLeft <= 10) {
+              timerElement.style.color = "#dc3545";
+              timerElement.style.fontWeight = "bold";
+            }
+          }
+          if (timeLeft <= 0) {
+            clearInterval(interval);
+          }
+        }, 1000);
+      }
+
+      function quickBid(auctionId, amount) {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(`BID|${auctionId}|${amount}|${username}`);
+          showNotification(
+            `Bid placed: $${amount} on auction ${auctionId}`,
+            "success"
+          );
+        } else {
+          showNotification(
+            "Connection lost. Please refresh the page.",
+            "error"
+          );
+        }
+      }
+
+      // Create auction form
+      document
+        .getElementById("createForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const name = document.getElementById("name").value.trim();
+          const price = document.getElementById("price").value;
+          const duration = document.getElementById("duration").value;
+
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(`CREATE|${name}|${price}|${duration}`);
+            document.getElementById("createMessage").innerHTML =
+              '<p style="color: #28a745;">Auction created successfully!</p>';
+            document.getElementById("createForm").reset();
+            myAuctions.push({ name, price, duration });
+            updateMyActivity();
+          } else {
+            showNotification(
+              "Connection lost. Please refresh the page.",
+              "error"
+            );
+          }
+        });
+
+      // Bid form
+      document
+        .getElementById("bidForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const id = document.getElementById("bidAuctionId").value;
+          const amount = document.getElementById("bidAmount").value;
+
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(`BID|${id}|${amount}|${username}`);
+            document.getElementById("bidMessage").innerHTML =
+              '<p style="color: #28a745;">Bid submitted!</p>';
+            myBids.push({ id, amount });
+            updateMyActivity();
+          } else {
+            showNotification(
+              "Connection lost. Please refresh the page.",
+              "error"
+            );
+          }
+        });
+
+      function updateMyActivity() {
+        const activityLog = document.getElementById("activityLog");
+        let html = "<h3>My Auctions Created:</h3>";
+        if (myAuctions.length === 0) {
+          html += "<p>You haven't created any auctions yet.</p>";
+        } else {
+          myAuctions.forEach((auction, index) => {
+            html += `<p>📝 ${auction.name} - Starting at $${auction.price} for ${auction.duration}s</p>`;
+          });
+        }
+
+        html += "<h3>My Bids:</h3>";
+        if (myBids.length === 0) {
+          html += "<p>You haven't placed any bids yet.</p>";
+        } else {
+          myBids.forEach((bid, index) => {
+            html += `<p>💰 Bid $${bid.amount} on auction #${bid.id}</p>`;
+          });
+        }
+
+        activityLog.innerHTML = html;
+      }
+
+      function showNotification(message, type) {
+        const notification = document.getElementById("notification");
+        notification.textContent = message;
+        notification.className = `notification ${type} show`;
+
+        setTimeout(() => {
+          notification.classList.remove("show");
+        }, 3000);
+      }
+
+      // Initialize activity log
+      updateMyActivity();
+    </script>
+  </body>
+</html>

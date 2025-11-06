@@ -19,6 +19,7 @@
 ## 🚀 How to Run (Super Simple)
 
 ### Method 1: One-Click Start (Recommended)
+
 ```
 1. Double-click: start-server.bat
 2. Open browser: http://localhost:8080
@@ -26,11 +27,13 @@
 ```
 
 ### Method 2: PowerShell
+
 ```powershell
 .\start-server.bat
 ```
 
 ### Method 3: Manual Start
+
 ```powershell
 java -cp ".;lib\java-websocket-1.5.3.jar;lib\slf4j-api-1.7.36.jar;lib\slf4j-simple-1.7.36.jar" server.Server
 ```
@@ -55,22 +58,26 @@ java -cp ".;lib\java-websocket-1.5.3.jar;lib\slf4j-api-1.7.36.jar;lib\slf4j-simp
 ## 🎪 Dashboard Features
 
 ### 🏆 Active Auctions Tab
+
 - View all live auctions in real-time
 - Quick bid buttons for easy bidding
 - Live countdown timers
 - Instant winner announcements
 
 ### ➕ Create Auction Tab
+
 - Simple form to start new auctions
 - Set name, starting price, duration
 - Instant creation and broadcasting
 
 ### 💰 Place Bid Tab
+
 - Manual bidding by auction ID
 - Input validation and error handling
 - Success notifications
 
 ### 📊 My Activity Tab
+
 - Track your created auctions
 - View your bidding history
 - Personal activity summary
@@ -114,6 +121,7 @@ java -cp ".;lib\java-websocket-1.5.3.jar;lib\slf4j-api-1.7.36.jar;lib\slf4j-simp
 ## 🎯 Multi-User Testing
 
 Open multiple browser tabs/windows:
+
 1. **Tab 1**: Login as "Alice" → Create auctions
 2. **Tab 2**: Login as "Bob" → Place bids
 3. **Tab 3**: Login as "Charlie" → Compete with Bob
@@ -128,6 +136,7 @@ java client.Client
 ```
 
 **Commands:**
+
 - `CREATE|iPhone|500|60` - Create auction
 - `BID|0|550` - Bid on auction ID 0
 - `exit` - Quit
@@ -137,16 +146,19 @@ java client.Client
 ## 🛠️ Troubleshooting
 
 ### Server Won't Start
+
 - Install Java: https://java.com/download
 - Check ports 5000, 5001, 8080 are free
 - Run as Administrator if needed
 
 ### Web Page Won't Load
+
 - Ensure server shows "HTTP server started on port 8080"
 - Try: http://localhost:8080/dashboard.html
 - Clear browser cache
 
 ### Connection Issues
+
 - Check Windows Firewall settings
 - Try different browser
 - Restart server
@@ -158,6 +170,7 @@ java client.Client
 Everything is included and configured. Just run `start-server.bat` and enjoy your professional auction system!
 
 **Perfect for:**
+
 - Learning WebSocket programming
 - Demonstrating real-time applications
 - Fun competitive bidding games
