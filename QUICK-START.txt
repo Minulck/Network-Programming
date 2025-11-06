@@ -1,0 +1,46 @@
+🎯 BidEasy Auction System - Quick Start Guide
+===============================================
+
+🚀 SUPER EASY SETUP (30 SECONDS):
+
+1. Double-click: start-server.bat
+2. Open browser: http://localhost:8080
+3. Enter any username and start bidding!
+
+📋 WHAT HAPPENS WHEN YOU START:
+- ✅ Server compiles automatically
+- ✅ All 3 services start (Web, WebSocket, Console)
+- ✅ Web interface opens at http://localhost:8080
+
+🎮 DEMO SCENARIO:
+1. Login as "Alice" → Create auction "iPhone 15", $500, 60 seconds
+2. Open new tab → Login as "Bob" → Click "Quick Bid $501"
+3. Watch real-time updates across all tabs!
+
+🔧 REQUIREMENTS:
+- Java 8+ (required)
+- Modern web browser
+- Ports 5000, 5001, 8080 available
+
+🎪 FEATURES:
+- ⚡ Real-time bidding
+- 📱 Mobile-friendly interface
+- 👥 Multi-user support
+- ⏱️ Auto-ending auctions
+- 🎨 Beautiful modern UI
+
+💡 ALTERNATIVE METHODS:
+- PowerShell: .\start-server.bat
+- Manual: See README.md for detailed instructions
+
+🛠️ TROUBLESHOOTING:
+- No Java? → Install from java.com
+- Port busy? → Close other applications
+- Won't start? → Run as Administrator
+
+📁 FILES INCLUDED:
+- start-server.bat (one-click startup)
+- client/dashboard.html (main interface)
+- All Java source code and dependencies
+
+Ready to start your auction house? Double-click start-server.bat now! 🎉
