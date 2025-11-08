@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -559,6 +559,1133 @@
       }
 
       // Initialize activity log
+      updateMyActivity();
+    </script>
+  </body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BidEasy - Enterprise Auction Platform</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        background: linear-gradient(
+          135deg,
+          #0f0c29 0%,
+          #302b63 50%,
+          #24243e 100%
+        );
+        min-height: 100vh;
+        color: #e4e6eb;
+        line-height: 1.6;
+      }
+
+      /* Login Page */
+      #login {
+        max-width: 480px;
+        margin: 80px auto;
+        background: #1e1e2e;
+        padding: 50px 40px;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        border: 1px solid #2d2d44;
+      }
+
+      .login-header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .logo-container {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 20px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+      }
+
+      .logo-container i {
+        font-size: 40px;
+        color: white;
+      }
+
+      .login-header h1 {
+        color: #e4e6eb;
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .login-header p {
+        color: #b0b3b8;
+        font-size: 15px;
+      }
+
+      /* Main Dashboard */
+      #main {
+        max-width: 1400px;
+        margin: 20px auto;
+        background: #1a1a2e;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        border: 1px solid #2d2d44;
+      }
+
+      /* Header */
+      .dashboard-header {
+        background: #16213e;
+        padding: 24px 32px;
+        border-bottom: 1px solid #2d2d44;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .header-logo {
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .header-logo i {
+        font-size: 24px;
+        color: white;
+      }
+
+      .header-title h1 {
+        font-size: 24px;
+        font-weight: 700;
+        color: #e4e6eb;
+        margin-bottom: 2px;
+      }
+
+      .header-title p {
+        font-size: 13px;
+        color: #b0b3b8;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        background: #1e1e2e;
+        padding: 12px 20px;
+        border-radius: 12px;
+        border: 1px solid #2d2d44;
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+      }
+
+      .user-details strong {
+        display: block;
+        font-size: 14px;
+        color: #e4e6eb;
+      }
+
+      .connection-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        margin-top: 2px;
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      .status-online .status-dot {
+        background: #28a745;
+        box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
+        animation: pulse-online 2s infinite;
+      }
+
+      .status-offline .status-dot {
+        background: #dc3545;
+      }
+
+      @keyframes pulse-online {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      /* Tabs */
+      .tabs {
+        display: flex;
+        background: #16213e;
+        border-bottom: 2px solid #2d2d44;
+        padding: 0 32px;
+      }
+
+      .tab {
+        background: none;
+        border: none;
+        padding: 16px 24px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 600;
+        color: #b0b3b8;
+        transition: all 0.3s;
+        border-bottom: 3px solid transparent;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .tab:hover {
+        color: #e4e6eb;
+        background: #1e1e2e;
+      }
+
+      .tab.active {
+        color: #667eea;
+        border-bottom-color: #667eea;
+      }
+
+      .tab i {
+        font-size: 16px;
+      }
+
+      /* Content Area */
+      .tab-content {
+        display: none;
+        padding: 32px;
+        background: #0f0f1e;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .content-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+
+      .content-header h2 {
+        font-size: 22px;
+        font-weight: 700;
+        color: #e4e6eb;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      /* Forms */
+      form {
+        background: #1e1e2e;
+        padding: 32px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        max-width: 600px;
+        border: 1px solid #2d2d44;
+      }
+
+      .form-group {
+        margin-bottom: 24px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #b0b3b8;
+        font-size: 14px;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #2d2d44;
+        border-radius: 8px;
+        font-size: 15px;
+        transition: all 0.3s;
+        font-family: inherit;
+        background: #16213e;
+        color: #e4e6eb;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+        background: #1e1e2e;
+      }
+
+      button[type="submit"] {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 14px 28px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 600;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      }
+
+      button[type="submit"]:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+      }
+
+      /* Auctions Grid */
+      .auctions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 24px;
+      }
+
+      .auction {
+        background: #1e1e2e;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s;
+        border-left: 4px solid #667eea;
+        border: 1px solid #2d2d44;
+        border-left: 4px solid #667eea;
+      }
+
+      .auction:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        border-color: #667eea;
+      }
+
+      .auction.ended {
+        opacity: 0.7;
+        border-left-color: #dc3545;
+        background: #1a1a2e;
+      }
+
+      .auction-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 20px;
+      }
+
+      .auction-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #e4e6eb;
+        margin-bottom: 4px;
+      }
+
+      .auction-id {
+        background: #2d2d44;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #b0b3b8;
+      }
+
+      .auction-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+
+      .detail-item {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .detail-label {
+        font-size: 12px;
+        color: #b0b3b8;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .detail-value {
+        font-size: 16px;
+        font-weight: 700;
+        color: #e4e6eb;
+      }
+
+      .detail-value.price {
+        color: #28a745;
+      }
+
+      .detail-value.timer {
+        color: #667eea;
+      }
+
+      .detail-value.timer.urgent {
+        color: #dc3545;
+        animation: pulse 1s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.6;
+        }
+      }
+
+      .auction-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .bid-button {
+        flex: 1;
+        min-width: 120px;
+        background: #667eea;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      .bid-button:hover {
+        background: #5568d3;
+        transform: translateY(-2px);
+      }
+
+      .winner-badge {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+      }
+
+      /* Activity Log */
+      .activity-section {
+        background: #1e1e2e;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        border: 1px solid #2d2d44;
+      }
+
+      .activity-section h3 {
+        font-size: 16px;
+        font-weight: 700;
+        color: #e4e6eb;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .activity-item {
+        padding: 12px;
+        background: #16213e;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border: 1px solid #2d2d44;
+      }
+
+      .activity-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+      }
+
+      .activity-icon.create {
+        background: rgba(102, 126, 234, 0.2);
+        color: #667eea;
+      }
+
+      .activity-icon.bid {
+        background: rgba(255, 152, 0, 0.2);
+        color: #ff9800;
+      }
+
+      /* Notifications */
+      .notification {
+        position: fixed;
+        top: 24px;
+        right: 24px;
+        padding: 16px 20px;
+        border-radius: 12px;
+        color: white;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 300px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      }
+
+      .notification.success {
+        background: linear-gradient(135deg, #28a745, #20c997);
+      }
+
+      .notification.error {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+      }
+
+      .notification.show {
+        opacity: 1;
+      }
+
+      .notification i {
+        font-size: 20px;
+      }
+
+      /* Empty State */
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+      }
+
+      .empty-state i {
+        font-size: 64px;
+        color: #2d2d44;
+        margin-bottom: 16px;
+      }
+
+      .empty-state p {
+        color: #b0b3b8;
+        font-size: 15px;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .dashboard-header {
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        .tabs {
+          overflow-x: auto;
+          padding: 0 16px;
+        }
+
+        .tab-content {
+          padding: 16px;
+        }
+
+        .auctions-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .auction-details {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="login" style="display: block">
+      <div class="login-header">
+        <div class="logo-container">
+          <i class="fas fa-gavel"></i>
+        </div>
+        <h1>BidEasy</h1>
+        <p>Enterprise Auction Platform</p>
+      </div>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="username"><i class="fas fa-user"></i> Username</label>
+          <input
+            type="text"
+            id="username"
+            placeholder="Enter your username"
+            required
+          />
+        </div>
+        <button type="submit">
+          <i class="fas fa-sign-in-alt"></i>
+          Sign In to Platform
+        </button>
+      </form>
+    </div>
+
+    <div id="main" style="display: none">
+      <div class="dashboard-header">
+        <div class="header-left">
+          <div class="header-logo">
+            <i class="fas fa-gavel"></i>
+          </div>
+          <div class="header-title">
+            <h1>BidEasy Dashboard</h1>
+            <p>Real-time auction management platform</p>
+          </div>
+        </div>
+        <div class="user-info">
+          <div class="user-avatar" id="userAvatar">U</div>
+          <div class="user-details">
+            <strong id="currentUser"></strong>
+            <div class="connection-status status-offline" id="connectionStatus">
+              <span class="status-dot"></span>
+              <span id="statusText">Offline</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" onclick="openTab(event, 'auctionList')">
+          <i class="fas fa-list"></i> Active Auctions
+        </button>
+        <button class="tab" onclick="openTab(event, 'createAuction')">
+          <i class="fas fa-plus-circle"></i> Create Auction
+        </button>
+        <button class="tab" onclick="openTab(event, 'placeBid')">
+          <i class="fas fa-hand-holding-usd"></i> Place Bid
+        </button>
+        <button class="tab" onclick="openTab(event, 'myActivity')">
+          <i class="fas fa-chart-line"></i> My Activity
+        </button>
+      </div>
+
+      <div id="auctionList" class="tab-content active">
+        <div class="content-header">
+          <h2><i class="fas fa-fire"></i> Active Auctions</h2>
+        </div>
+        <div id="auctions" class="auctions-grid">
+          <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <p>
+              No active auctions at the moment.<br />Be the first to create one!
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div id="createAuction" class="tab-content">
+        <div class="content-header">
+          <h2><i class="fas fa-plus-circle"></i> Create New Auction</h2>
+        </div>
+        <form id="createForm">
+          <div class="form-group">
+            <label><i class="fas fa-tag"></i> Auction Name</label>
+            <input
+              type="text"
+              id="name"
+              placeholder="e.g., iPhone 15 Pro Max"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-dollar-sign"></i> Starting Price ($)</label>
+            <input
+              type="number"
+              id="price"
+              step="0.01"
+              min="0.01"
+              placeholder="100.00"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-clock"></i> Duration (seconds)</label>
+            <input
+              type="number"
+              id="duration"
+              min="10"
+              placeholder="60"
+              required
+            />
+          </div>
+          <button type="submit">
+            <i class="fas fa-rocket"></i>
+            Launch Auction
+          </button>
+        </form>
+        <div id="createMessage"></div>
+      </div>
+
+      <div id="placeBid" class="tab-content">
+        <div class="content-header">
+          <h2><i class="fas fa-hand-holding-usd"></i> Place Your Bid</h2>
+        </div>
+        <form id="bidForm">
+          <div class="form-group">
+            <label><i class="fas fa-hashtag"></i> Auction ID</label>
+            <input
+              type="number"
+              id="bidAuctionId"
+              min="0"
+              placeholder="Enter auction ID"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label
+              ><i class="fas fa-dollar-sign"></i> Your Bid Amount ($)</label
+            >
+            <input
+              type="number"
+              id="bidAmount"
+              step="0.01"
+              min="0.01"
+              placeholder="150.00"
+              required
+            />
+          </div>
+          <button type="submit">
+            <i class="fas fa-gavel"></i>
+            Submit Bid
+          </button>
+        </form>
+        <div id="bidMessage"></div>
+      </div>
+
+      <div id="myActivity" class="tab-content">
+        <div class="content-header">
+          <h2><i class="fas fa-chart-line"></i> My Activity</h2>
+        </div>
+        <div id="activityLog"></div>
+      </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+      let ws;
+      let username;
+      let myAuctions = [];
+      let myBids = [];
+
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          login();
+        });
+
+      function login() {
+        username = document.getElementById("username").value.trim();
+        if (!username) {
+          showNotification("Please enter a username", "error");
+          return;
+        }
+
+        try {
+          ws = new WebSocket("ws://localhost:5001");
+
+          ws.onopen = () => {
+            ws.send("LOGIN|" + username);
+            document.getElementById("statusText").textContent = "Connecting...";
+          };
+
+          ws.onmessage = handleMessage;
+
+          ws.onclose = () => {
+            const statusEl = document.getElementById("connectionStatus");
+            statusEl.className = "connection-status status-offline";
+            document.getElementById("statusText").textContent = "Offline";
+            showNotification(
+              "Connection lost. Please refresh and try again.",
+              "error"
+            );
+          };
+
+          ws.onerror = () => {
+            showNotification(
+              "Connection error. Make sure the server is running.",
+              "error"
+            );
+          };
+        } catch (error) {
+          showNotification(
+            "Failed to connect. Make sure the server is running on localhost:5001",
+            "error"
+          );
+        }
+      }
+
+      function handleMessage(event) {
+        const msg = event.data;
+        console.log("Received:", msg);
+
+        if (msg.startsWith("WELCOME|")) {
+          document.getElementById("login").style.display = "none";
+          document.getElementById("main").style.display = "block";
+          document.getElementById("currentUser").textContent = username;
+          document.getElementById("userAvatar").textContent = username
+            .charAt(0)
+            .toUpperCase();
+          const statusEl = document.getElementById("connectionStatus");
+          statusEl.className = "connection-status status-online";
+          document.getElementById("statusText").textContent = "Online";
+          showNotification("Welcome to BidEasy!", "success");
+        } else if (msg.startsWith("NEW_AUCTION|")) {
+          const parts = msg.split("|");
+          addAuction(parts[1], parts[2], parts[3], parts[4]);
+        } else if (msg.startsWith("UPDATE|")) {
+          const parts = msg.split("|");
+          updateAuction(parts[1], parts[2], parts[3]);
+        } else if (msg.startsWith("END|")) {
+          const parts = msg.split("|");
+          endAuction(parts[1], parts[2], parts[3]);
+        } else if (msg.startsWith("ERROR|")) {
+          const errorMsg = msg.split("|")[1];
+          showNotification("Error: " + errorMsg, "error");
+        }
+      }
+
+      function openTab(evt, tabName) {
+        const tabcontent = document.getElementsByClassName("tab-content");
+        for (let i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].classList.remove("active");
+        }
+        const tabs = document.getElementsByClassName("tab");
+        for (let i = 0; i < tabs.length; i++) {
+          tabs[i].classList.remove("active");
+        }
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+      }
+
+      function addAuction(id, name, price, duration) {
+        const auctionsDiv = document.getElementById("auctions");
+        if (auctionsDiv.querySelector(".empty-state")) {
+          auctionsDiv.innerHTML = "";
+        }
+
+        const div = document.createElement("div");
+        div.id = "auction-" + id;
+        div.className = "auction";
+        div.innerHTML = `
+                <div class="auction-header">
+                    <div>
+                        <div class="auction-title">${name}</div>
+                    </div>
+                    <div class="auction-id">ID: ${id}</div>
+                </div>
+                <div class="auction-details">
+                    <div class="detail-item">
+                        <div class="detail-label"><i class="fas fa-dollar-sign"></i> Starting Price</div>
+                        <div class="detail-value price">$${parseFloat(
+                          price
+                        ).toFixed(2)}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label"><i class="fas fa-chart-line"></i> Current Bid</div>
+                        <div class="detail-value price" id="current-bid-${id}">$${parseFloat(
+          price
+        ).toFixed(2)}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label"><i class="fas fa-user"></i> Highest Bidder</div>
+                        <div class="detail-value" id="bidder-${id}">None yet</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label"><i class="fas fa-clock"></i> Time Remaining</div>
+                        <div class="detail-value timer" id="timer-${id}">${duration}s</div>
+                    </div>
+                </div>
+                <div class="auction-actions">
+                    <button class="bid-button" onclick="quickBid(${id}, ${
+          parseFloat(price) + 1
+        })">
+                        <i class="fas fa-plus"></i> $${(
+                          parseFloat(price) + 1
+                        ).toFixed(2)}
+                    </button>
+                    <button class="bid-button" onclick="quickBid(${id}, ${
+          parseFloat(price) + 5
+        })">
+                        <i class="fas fa-plus"></i> $${(
+                          parseFloat(price) + 5
+                        ).toFixed(2)}
+                    </button>
+                </div>
+            `;
+        auctionsDiv.appendChild(div);
+        startTimer(id, parseInt(duration));
+        showNotification(`New auction: ${name}`, "success");
+      }
+
+      function updateAuction(id, bid, bidder) {
+        const currentBidEl = document.getElementById(`current-bid-${id}`);
+        const bidderEl = document.getElementById(`bidder-${id}`);
+        const div = document.getElementById("auction-" + id);
+
+        if (currentBidEl)
+          currentBidEl.textContent = `$${parseFloat(bid).toFixed(2)}`;
+        if (bidderEl) bidderEl.textContent = bidder;
+
+        if (div) {
+          const buttons = div.querySelectorAll(".bid-button");
+          buttons.forEach((button, index) => {
+            const increment = index === 0 ? 1 : 5;
+            const newBid = parseFloat(bid) + increment;
+            button.innerHTML = `<i class="fas fa-plus"></i> $${newBid.toFixed(
+              2
+            )}`;
+            button.onclick = () => quickBid(id, newBid);
+          });
+        }
+
+        if (bidder === username) {
+          showNotification(
+            `You are now the highest bidder on auction ${id}!`,
+            "success"
+          );
+        } else {
+          showNotification(
+            `New bid on auction ${id}: $${bid} by ${bidder}`,
+            "success"
+          );
+        }
+      }
+
+      function endAuction(id, winner, price) {
+        const div = document.getElementById("auction-" + id);
+        if (div) {
+          div.className = "auction ended";
+          const actionsDiv = div.querySelector(".auction-actions");
+          if (actionsDiv) {
+            actionsDiv.innerHTML = `
+                        <div class="winner-badge">
+                            <i class="fas fa-trophy"></i>
+                            Winner: ${winner} | Final: $${parseFloat(
+              price
+            ).toFixed(2)}
+                        </div>
+                    `;
+          }
+
+          if (winner === username) {
+            showNotification(
+              `Congratulations! You won auction ${id} with $${price}!`,
+              "success"
+            );
+          } else {
+            showNotification(
+              `Auction ${id} ended. Winner: ${winner} ($${price})`,
+              "success"
+            );
+          }
+        }
+      }
+
+      function startTimer(auctionId, duration) {
+        let timeLeft = duration;
+        const timerElement = document.getElementById(`timer-${auctionId}`);
+
+        const interval = setInterval(() => {
+          timeLeft--;
+          if (timerElement) {
+            timerElement.textContent = timeLeft + "s";
+            if (timeLeft <= 10) {
+              timerElement.classList.add("urgent");
+            }
+          }
+          if (timeLeft <= 0) {
+            clearInterval(interval);
+          }
+        }, 1000);
+      }
+
+      function quickBid(auctionId, amount) {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(`BID|${auctionId}|${amount}|${username}`);
+          showNotification(
+            `Bid placed: $${amount.toFixed(2)} on auction ${auctionId}`,
+            "success"
+          );
+        } else {
+          showNotification(
+            "Connection lost. Please refresh the page.",
+            "error"
+          );
+        }
+      }
+
+      document
+        .getElementById("createForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const name = document.getElementById("name").value.trim();
+          const price = document.getElementById("price").value;
+          const duration = document.getElementById("duration").value;
+
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(`CREATE|${name}|${price}|${duration}`);
+            showNotification("Auction created successfully!", "success");
+            document.getElementById("createForm").reset();
+            myAuctions.push({ name, price, duration });
+            updateMyActivity();
+          } else {
+            showNotification(
+              "Connection lost. Please refresh the page.",
+              "error"
+            );
+          }
+        });
+
+      document
+        .getElementById("bidForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const id = document.getElementById("bidAuctionId").value;
+          const amount = document.getElementById("bidAmount").value;
+
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(`BID|${id}|${amount}|${username}`);
+            showNotification("Bid submitted successfully!", "success");
+            document.getElementById("bidForm").reset();
+            myBids.push({ id, amount });
+            updateMyActivity();
+          } else {
+            showNotification(
+              "Connection lost. Please refresh the page.",
+              "error"
+            );
+          }
+        });
+
+      function updateMyActivity() {
+        const activityLog = document.getElementById("activityLog");
+        let html = "";
+
+        html += '<div class="activity-section">';
+        html += '<h3><i class="fas fa-plus-circle"></i> Auctions Created</h3>';
+        if (myAuctions.length === 0) {
+          html +=
+            '<div class="empty-state" style="padding: 30px;"><i class="fas fa-inbox" style="font-size: 48px;"></i><p>You haven\'t created any auctions yet.</p></div>';
+        } else {
+          myAuctions.forEach((auction) => {
+            html += `
+                        <div class="activity-item">
+                            <div class="activity-icon create">
+                                <i class="fas fa-gavel"></i>
+                            </div>
+                            <div>
+                                <strong>${auction.name}</strong><br>
+                                <small>Starting at ${parseFloat(
+                                  auction.price
+                                ).toFixed(2)} • Duration: ${
+              auction.duration
+            }s</small>
+                            </div>
+                        </div>
+                    `;
+          });
+        }
+        html += "</div>";
+
+        html += '<div class="activity-section">';
+        html += '<h3><i class="fas fa-hand-holding-usd"></i> Bids Placed</h3>';
+        if (myBids.length === 0) {
+          html +=
+            '<div class="empty-state" style="padding: 30px;"><i class="fas fa-inbox" style="font-size: 48px;"></i><p>You haven\'t placed any bids yet.</p></div>';
+        } else {
+          myBids.forEach((bid) => {
+            html += `
+                        <div class="activity-item">
+                            <div class="activity-icon bid">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div>
+                                <strong>Bid on Auction #${bid.id}</strong><br>
+                                <small>Amount: ${parseFloat(bid.amount).toFixed(
+                                  2
+                                )}</small>
+                            </div>
+                        </div>
+                    `;
+          });
+        }
+        html += "</div>";
+
+        activityLog.innerHTML = html;
+      }
+
+      function showNotification(message, type) {
+        const notification = document.getElementById("notification");
+        const icon = type === "success" ? "check-circle" : "exclamation-circle";
+        notification.innerHTML = `<i class="fas fa-${icon}"></i><span>${message}</span>`;
+        notification.className = `notification ${type} show`;
+
+        setTimeout(() => {
+          notification.classList.remove("show");
+        }, 3000);
+      }
+
       updateMyActivity();
     </script>
   </body>
