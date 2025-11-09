@@ -42,7 +42,11 @@ public class AuctionManager {
         Auction auction = new Auction(auctions.size(), name, startPrice, durationSec, creator.getUsername());
         auctions.add(auction);
 
+        // Send standard update message
         Server.broadcast(Protocol.newAuctionMessage(auction.getId(), auction.getName(), auction.getStartPrice(), auction.getDurationSec()));
+        
+        // Send rich notification with emoji to all clients
+        Server.broadcast(Protocol.auctionStartNotification(auction.getId(), auction.getName(), auction.getStartPrice(), creator.getUsername()));
 
         // Schedule auto-end
         timer.schedule(() -> endAuction(auction), durationSec, TimeUnit.SECONDS);
@@ -57,7 +61,12 @@ public class AuctionManager {
         if (a != null && amount > a.getCurrentBid()) {
             a.setCurrentBid(amount);
             a.setHighestBidder(bidder);
+            
+            // Send standard update message
             Server.broadcast(Protocol.updateMessage(a.getId(), a.getCurrentBid(), a.getHighestBidder()));
+            
+            // Send rich bid notification with emoji to all clients
+            Server.broadcast(Protocol.bidNotification(a.getId(), a.getName(), amount, bidder));
         } else {
             handler.sendMessage(Protocol.errorMessage("Bid too low"));
         }
@@ -66,7 +75,12 @@ public class AuctionManager {
     private static void endAuction(Auction a) {
         String winner = a.getHighestBidder() != null ? a.getHighestBidder() : "No bids";
         double finalPrice = a.getCurrentBid();
+        
+        // Send standard end message
         Server.broadcast(Protocol.endAuctionMessage(a.getId(), winner, finalPrice));
+        
+        // Send rich auction end notification with emoji to all clients
+        Server.broadcast(Protocol.auctionEndNotification(a.getId(), a.getName(), winner, finalPrice));
         // Optional: remove from list
     }
 }
