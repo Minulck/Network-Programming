@@ -104,28 +104,183 @@
         margin: 5px;
       }
 
-      .notification {
+      /* Modern Toast Notification System */
+      .notification-container {
         position: fixed;
         top: 20px;
         right: 20px;
-        padding: 15px;
-        border-radius: 5px;
-        color: white;
-        z-index: 1000;
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        max-width: 400px;
+        pointer-events: none;
+      }
+
+      .notification {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+        padding: 16px 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        min-width: 320px;
+        max-width: 400px;
         opacity: 0;
-        transition: opacity 0.3s;
-      }
-
-      .notification.success {
-        background: #28a745;
-      }
-
-      .notification.error {
-        background: #dc3545;
+        transform: translateX(400px);
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        pointer-events: all;
+        border-left: 4px solid;
+        position: relative;
+        overflow: hidden;
       }
 
       .notification.show {
         opacity: 1;
+        transform: translateX(0);
+      }
+
+      .notification.hide {
+        opacity: 0;
+        transform: translateX(450px) scale(0.8);
+        max-height: 0;
+        padding: 0 20px;
+        margin-bottom: -12px;
+      }
+
+      .notification-icon {
+        font-size: 24px;
+        flex-shrink: 0;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+      }
+
+      .notification-content {
+        flex: 1;
+        padding-top: 2px;
+      }
+
+      .notification-title {
+        font-weight: 600;
+        font-size: 15px;
+        margin-bottom: 4px;
+        color: #1a202c;
+      }
+
+      .notification-message {
+        font-size: 14px;
+        color: #4a5568;
+        line-height: 1.4;
+      }
+
+      .notification-close {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 0;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        color: #718096;
+        transition: all 0.2s;
+        margin: 0;
+        flex-shrink: 0;
+      }
+
+      .notification-close:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: #2d3748;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .notification-progress {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 3px;
+        background: currentColor;
+        opacity: 0.3;
+        transition: width linear;
+      }
+
+      /* Success Notification */
+      .notification.success {
+        border-left-color: #10b981;
+      }
+
+      .notification.success .notification-icon {
+        background: #d1fae5;
+        color: #10b981;
+      }
+
+      .notification.success .notification-progress {
+        color: #10b981;
+      }
+
+      /* Error Notification */
+      .notification.error {
+        border-left-color: #ef4444;
+      }
+
+      .notification.error .notification-icon {
+        background: #fee2e2;
+        color: #ef4444;
+      }
+
+      .notification.error .notification-progress {
+        color: #ef4444;
+      }
+
+      /* Info Notification */
+      .notification.info {
+        border-left-color: #3b82f6;
+      }
+
+      .notification.info .notification-icon {
+        background: #dbeafe;
+        color: #3b82f6;
+      }
+
+      .notification.info .notification-progress {
+        color: #3b82f6;
+      }
+
+      /* Warning Notification */
+      .notification.warning {
+        border-left-color: #f59e0b;
+      }
+
+      .notification.warning .notification-icon {
+        background: #fef3c7;
+        color: #f59e0b;
+      }
+
+      .notification.warning .notification-progress {
+        color: #f59e0b;
+      }
+
+      /* Bid Notification (Special) */
+      .notification.bid {
+        border-left-color: #8b5cf6;
+      }
+
+      .notification.bid .notification-icon {
+        background: #ede9fe;
+        color: #8b5cf6;
+      }
+
+      .notification.bid .notification-progress {
+        color: #8b5cf6;
       }
     </style>
   </head>
@@ -239,7 +394,8 @@
       </div>
     </div>
 
-    <div id="notification" class="notification"></div>
+    <!-- Modern Notification Container -->
+    <div id="notification-container" class="notification-container"></div>
 
     <script>
       let ws;
@@ -258,7 +414,7 @@
       function login() {
         username = document.getElementById("username").value.trim();
         if (!username) {
-          showNotification("Please enter a username", "error");
+          showError("Please enter a valid username to continue", "Login Required");
           return;
         }
 
@@ -269,6 +425,7 @@
             ws.send("LOGIN|" + username);
             document.getElementById("connectionStatus").textContent =
               "Connecting...";
+            showInfo("Connecting to auction server...", "Establishing Connection");
           };
 
           ws.onmessage = handleMessage;
@@ -277,22 +434,22 @@
             document.getElementById("connectionStatus").textContent = "Offline";
             document.getElementById("connectionStatus").className =
               "status-offline";
-            showNotification(
+            showError(
               "Connection lost. Please refresh and try again.",
-              "error"
+              "Disconnected"
             );
           };
 
           ws.onerror = (error) => {
-            showNotification(
+            showError(
               "Connection error. Make sure the server is running.",
-              "error"
+              "Connection Failed"
             );
           };
         } catch (error) {
-          showNotification(
+          showError(
             "Failed to connect. Make sure the server is running on localhost:5001",
-            "error"
+            "Connection Failed"
           );
         }
       }
@@ -308,7 +465,7 @@
           document.getElementById("connectionStatus").textContent = "Online";
           document.getElementById("connectionStatus").className =
             "status-online";
-          showNotification("Welcome to BidEasy!", "success");
+          showSuccess(`Welcome to BidEasy, ${username}! 🎉`, "Connected Successfully");
         } else if (msg.startsWith("NEW_AUCTION|")) {
           const parts = msg.split("|");
           addAuction(parts[1], parts[2], parts[3], parts[4]);
@@ -320,7 +477,7 @@
           endAuction(parts[1], parts[2], parts[3]);
         } else if (msg.startsWith("ERROR|")) {
           const errorMsg = msg.split("|")[1];
-          showNotification("Error: " + errorMsg, "error");
+          showError(errorMsg, "Server Error");
         } else {
           console.log("Unknown message:", msg);
         }
@@ -375,7 +532,7 @@
         // Start countdown timer
         startTimer(id, parseInt(duration));
 
-        showNotification(`New auction: ${name}`, "success");
+        showInfo(`${name} - Starting at $${price}`, "🔨 New Auction Available");
       }
 
       function updateAuction(id, bid, bidder) {
@@ -403,14 +560,14 @@
           });
 
           if (bidder === username) {
-            showNotification(
-              `You are now the highest bidder on auction ${id}!`,
-              "success"
+            showBidNotification(
+              `You are leading with $${bid} on auction #${id}!`,
+              "🎯 You're Winning!"
             );
           } else {
-            showNotification(
-              `New bid on auction ${id}: $${bid} by ${bidder}`,
-              "success"
+            showBidNotification(
+              `$${bid} by ${bidder}`,
+              `💰 Auction #${id} Updated`
             );
           }
         }
@@ -432,14 +589,19 @@
             quickBidDiv.innerHTML = `<p><strong>&#127942; Winner:</strong> ${winner} | <strong>Final Price:</strong> $${price}</p>`;
 
           if (winner === username) {
-            showNotification(
-              `Congratulations! You won auction ${id} with $${price}!`,
-              "success"
+            showSuccess(
+              `You won with a final bid of $${price}! 🎊`,
+              `🏆 Auction #${id} Won!`
+            );
+          } else if (winner === "None") {
+            showInfo(
+              `No bids were placed.`,
+              `Auction #${id} Ended`
             );
           } else {
-            showNotification(
-              `Auction ${id} ended. Winner: ${winner} ($${price})`,
-              "success"
+            showInfo(
+              `Winner: ${winner} with $${price}`,
+              `Auction #${id} Ended`
             );
           }
         }
@@ -448,6 +610,7 @@
       function startTimer(auctionId, duration) {
         let timeLeft = duration;
         const timerElement = document.getElementById(`timer-${auctionId}`);
+        let warningShown = false;
 
         const interval = setInterval(() => {
           timeLeft--;
@@ -456,6 +619,17 @@
             if (timeLeft <= 10) {
               timerElement.style.color = "#dc3545";
               timerElement.style.fontWeight = "bold";
+              
+              // Show warning at 10 seconds
+              if (timeLeft === 10 && !warningShown) {
+                const auctionDiv = document.getElementById(`auction-${auctionId}`);
+                const auctionName = auctionDiv?.querySelector('.auction-header')?.textContent || `#${auctionId}`;
+                showWarning(
+                  `Only 10 seconds left to bid!`,
+                  `⏰ ${auctionName} Ending Soon`
+                );
+                warningShown = true;
+              }
             }
           }
           if (timeLeft <= 0) {
@@ -467,14 +641,16 @@
       function quickBid(auctionId, amount) {
         if (ws && ws.readyState === WebSocket.OPEN) {
           ws.send(`BID|${auctionId}|${amount}|${username}`);
-          showNotification(
-            `Bid placed: $${amount} on auction ${auctionId}`,
-            "success"
+          myBids.push({ id: auctionId, amount });
+          updateMyActivity();
+          showBidNotification(
+            `Quick bid of $${amount} placed successfully!`,
+            `⚡ Auction #${auctionId}`
           );
         } else {
-          showNotification(
+          showError(
             "Connection lost. Please refresh the page.",
-            "error"
+            "Not Connected"
           );
         }
       }
@@ -495,10 +671,14 @@
             document.getElementById("createForm").reset();
             myAuctions.push({ name, price, duration });
             updateMyActivity();
+            showSuccess(
+              `"${name}" created with starting price $${price}`,
+              "Auction Created!"
+            );
           } else {
-            showNotification(
+            showError(
               "Connection lost. Please refresh the page.",
-              "error"
+              "Not Connected"
             );
           }
         });
@@ -517,10 +697,14 @@
               '<p style="color: #28a745;">Bid submitted!</p>';
             myBids.push({ id, amount });
             updateMyActivity();
+            showBidNotification(
+              `Placed $${amount} on auction #${id}`,
+              "Bid Submitted!"
+            );
           } else {
-            showNotification(
+            showError(
               "Connection lost. Please refresh the page.",
-              "error"
+              "Not Connected"
             );
           }
         });
@@ -548,14 +732,114 @@
         activityLog.innerHTML = html;
       }
 
-      function showNotification(message, type) {
-        const notification = document.getElementById("notification");
-        notification.textContent = message;
-        notification.className = `notification ${type} show`;
+      // Modern Interactive Notification System
+      let notificationId = 0;
 
+      function showNotification(message, type = "info", title = null, duration = 4000) {
+        const container = document.getElementById("notification-container");
+        const id = ++notificationId;
+
+        // Auto-generate title if not provided
+        if (!title) {
+          const titles = {
+            success: "Success!",
+            error: "Error!",
+            info: "Info",
+            warning: "Warning!",
+            bid: "New Bid!"
+          };
+          title = titles[type] || "Notification";
+        }
+
+        // Icons for different types
+        const icons = {
+          success: "✓",
+          error: "✕",
+          info: "ⓘ",
+          warning: "⚠",
+          bid: "🔨"
+        };
+
+        // Create notification element
+        const notification = document.createElement("div");
+        notification.className = `notification ${type}`;
+        notification.setAttribute("data-id", id);
+        notification.innerHTML = `
+          <div class="notification-icon">${icons[type] || "ⓘ"}</div>
+          <div class="notification-content">
+            <div class="notification-title">${title}</div>
+            <div class="notification-message">${message}</div>
+          </div>
+          <button class="notification-close" onclick="dismissNotification(${id})" aria-label="Close">×</button>
+          <div class="notification-progress" style="width: 100%"></div>
+        `;
+
+        container.appendChild(notification);
+
+        // Trigger show animation
         setTimeout(() => {
-          notification.classList.remove("show");
-        }, 3000);
+          notification.classList.add("show");
+        }, 10);
+
+        // Progress bar animation
+        const progressBar = notification.querySelector(".notification-progress");
+        setTimeout(() => {
+          progressBar.style.width = "0%";
+          progressBar.style.transition = `width ${duration}ms linear`;
+        }, 50);
+
+        // Auto dismiss
+        const timeoutId = setTimeout(() => {
+          dismissNotification(id);
+        }, duration);
+
+        // Store timeout ID for manual dismissal
+        notification.setAttribute("data-timeout", timeoutId);
+
+        // Limit to 5 notifications
+        const notifications = container.querySelectorAll(".notification");
+        if (notifications.length > 5) {
+          dismissNotification(notifications[0].getAttribute("data-id"));
+        }
+      }
+
+      function dismissNotification(id) {
+        const notification = document.querySelector(`[data-id="${id}"]`);
+        if (!notification) return;
+
+        // Clear auto-dismiss timeout
+        const timeoutId = notification.getAttribute("data-timeout");
+        if (timeoutId) clearTimeout(timeoutId);
+
+        // Hide animation
+        notification.classList.remove("show");
+        notification.classList.add("hide");
+
+        // Remove from DOM after animation
+        setTimeout(() => {
+          notification.remove();
+        }, 400);
+      }
+
+      // Enhanced notification helpers
+      function showSuccess(message, title = "Success!") {
+        showNotification(message, "success", title);
+      }
+
+      function showError(message, title = "Error!") {
+        showNotification(message, "error", title);
+      }
+
+      function showInfo(message, title = "Info") {
+        showNotification(message, "info", title);
+      }
+
+      function showWarning(message, title = "Warning!") {
+        showNotification(message, "warning", title);
+      }
+
+      function showBidNotification(message, title = "New Bid!") {
+        showNotification(message, "bid", title);
       }
 
       // Initialize activity log
