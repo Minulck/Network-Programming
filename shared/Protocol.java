@@ -9,6 +9,12 @@ public class Protocol {
     public static final String END = "END";
     public static final String ERROR = "ERROR";
     public static final String WELCOME = "WELCOME";
+    
+    // Notification message types (for enhanced server push)
+    public static final String NOTIFICATION = "NOTIFICATION";
+    public static final String BID_NOTIFICATION = "BID_NOTIFICATION";
+    public static final String AUCTION_START_NOTIFICATION = "AUCTION_START_NOTIFICATION";
+    public static final String AUCTION_END_NOTIFICATION = "AUCTION_END_NOTIFICATION";
 
     // Helper methods for message formatting
     public static String loginMessage(String username) {
@@ -41,5 +47,28 @@ public class Protocol {
 
     public static String welcomeMessage(String username) {
         return WELCOME + "|" + username;
+    }
+    
+    // Notification helper methods with emojis
+    public static String auctionStartNotification(int id, String name, double startPrice, String creator) {
+        return AUCTION_START_NOTIFICATION + "|🔔 New auction started: " + name + 
+               " at Rs. " + String.format("%.2f", startPrice) + " by " + creator + " (ID: " + id + ")";
+    }
+    
+    public static String bidNotification(int auctionId, String name, double amount, String bidder) {
+        return BID_NOTIFICATION + "|⚡ New highest bid on '" + name + "': Rs. " + 
+               String.format("%.2f", amount) + " by " + bidder + " (Auction ID: " + auctionId + ")";
+    }
+    
+    public static String auctionEndNotification(int auctionId, String name, String winner, double finalPrice) {
+        if (winner.equals("No bids")) {
+            return AUCTION_END_NOTIFICATION + "|🏁 Auction ended: '" + name + "' - No bids received (ID: " + auctionId + ")";
+        }
+        return AUCTION_END_NOTIFICATION + "|🏁 Auction ended: '" + name + "' - Winner: " + winner + 
+               " at Rs. " + String.format("%.2f", finalPrice) + " (ID: " + auctionId + ")";
+    }
+    
+    public static String generalNotification(String message) {
+        return NOTIFICATION + "|" + message;
     }
 }
