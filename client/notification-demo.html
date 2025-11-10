@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Notification System Demo</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .demo-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .demo-button {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .demo-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .btn-error {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .btn-bid {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+
+        .btn-all {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            grid-column: 1 / -1;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .info-box h3 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .info-box ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .info-box li {
+            margin: 8px 0;
+            color: #555;
+        }
+
+        /* Modern Toast Notification System */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 400px;
+            pointer-events: none;
+        }
+
+        .notification {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 16px 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            min-width: 320px;
+            max-width: 400px;
+            opacity: 0;
+            transform: translateX(400px);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            pointer-events: all;
+            border-left: 4px solid;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .notification.hide {
+            opacity: 0;
+            transform: translateX(450px) scale(0.8);
+            max-height: 0;
+            padding: 0 20px;
+            margin-bottom: -12px;
+        }
+
+        .notification-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .notification-content {
+            flex: 1;
+            padding-top: 2px;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+            color: #1a202c;
+        }
+
+        .notification-message {
+            font-size: 14px;
+            color: #4a5568;
+            line-height: 1.4;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            color: #718096;
+            transition: all 0.2s;
+            margin: 0;
+            flex-shrink: 0;
+        }
+
+        .notification-close:hover {
+            background: rgba(0, 0, 0, 0.05);
+            color: #2d3748;
+        }
+
+        .notification-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: currentColor;
+            opacity: 0.3;
+            transition: width linear;
+        }
+
+        /* Success Notification */
+        .notification.success {
+            border-left-color: #10b981;
+        }
+
+        .notification.success .notification-icon {
+            background: #d1fae5;
+            color: #10b981;
+        }
+
+        .notification.success .notification-progress {
+            color: #10b981;
+        }
+
+        /* Error Notification */
+        .notification.error {
+            border-left-color: #ef4444;
+        }
+
+        .notification.error .notification-icon {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .notification.error .notification-progress {
+            color: #ef4444;
+        }
+
+        /* Info Notification */
+        .notification.info {
+            border-left-color: #3b82f6;
+        }
+
+        .notification.info .notification-icon {
+            background: #dbeafe;
+            color: #3b82f6;
+        }
+
+        .notification.info .notification-progress {
+            color: #3b82f6;
+        }
+
+        /* Warning Notification */
+        .notification.warning {
+            border-left-color: #f59e0b;
+        }
+
+        .notification.warning .notification-icon {
+            background: #fef3c7;
+            color: #f59e0b;
+        }
+
+        .notification.warning .notification-progress {
+            color: #f59e0b;
+        }
+
+        /* Bid Notification (Special) */
+        .notification.bid {
+            border-left-color: #8b5cf6;
+        }
+
+        .notification.bid .notification-icon {
+            background: #ede9fe;
+            color: #8b5cf6;
+        }
+
+        .notification.bid .notification-progress {
+            color: #8b5cf6;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>🎨 Modern Notification System</h1>
+        <p class="subtitle">Interactive toast notifications for BidEasy Auction System</p>
+
+        <div class="button-grid">
+            <button class="demo-button btn-success" onclick="demoSuccess()">
+                ✓ Success
+            </button>
+            <button class="demo-button btn-error" onclick="demoError()">
+                ✕ Error
+            </button>
+            <button class="demo-button btn-info" onclick="demoInfo()">
+                ⓘ Info
+            </button>
+            <button class="demo-button btn-warning" onclick="demoWarning()">
+                ⚠ Warning
+            </button>
+            <button class="demo-button btn-bid" onclick="demoBid()">
+                🔨 Bid
+            </button>
+            <button class="demo-button btn-all" onclick="demoAll()">
+                🎉 Show All Types
+            </button>
+        </div>
+
+        <div class="info-box">
+            <h3>✨ Features</h3>
+            <ul>
+                <li><strong>5 Notification Types:</strong> Success, Error, Info, Warning, and Bid</li>
+                <li><strong>Auto-dismiss:</strong> Notifications automatically disappear after 4 seconds</li>
+                <li><strong>Progress Indicator:</strong> Visual countdown bar shows remaining time</li>
+                <li><strong>Manual Close:</strong> Click the × button to dismiss any notification</li>
+                <li><strong>Stacking:</strong> Multiple notifications appear in a stack (max 5)</li>
+                <li><strong>Smooth Animations:</strong> Slide-in from right with bounce effect</li>
+                <li><strong>Interactive:</strong> Hover effects and close buttons</li>
+                <li><strong>Modern Design:</strong> Clean, professional UI with icons and colors</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Modern Notification Container -->
+    <div id="notification-container" class="notification-container"></div>
+
+    <script>
+        // Modern Interactive Notification System
+        let notificationId = 0;
+
+        function showNotification(message, type = "info", title = null, duration = 4000) {
+            const container = document.getElementById("notification-container");
+            const id = ++notificationId;
+
+            // Auto-generate title if not provided
+            if (!title) {
+                const titles = {
+                    success: "Success!",
+                    error: "Error!",
+                    info: "Info",
+                    warning: "Warning!",
+                    bid: "New Bid!"
+                };
+                title = titles[type] || "Notification";
+            }
+
+            // Icons for different types
+            const icons = {
+                success: "✓",
+                error: "✕",
+                info: "ⓘ",
+                warning: "⚠",
+                bid: "🔨"
+            };
+
+            // Create notification element
+            const notification = document.createElement("div");
+            notification.className = `notification ${type}`;
+            notification.setAttribute("data-id", id);
+            notification.innerHTML = `
+                <div class="notification-icon">${icons[type] || "ⓘ"}</div>
+                <div class="notification-content">
+                    <div class="notification-title">${title}</div>
+                    <div class="notification-message">${message}</div>
+                </div>
+                <button class="notification-close" onclick="dismissNotification(${id})" aria-label="Close">×</button>
+                <div class="notification-progress" style="width: 100%"></div>
+            `;
+
+            container.appendChild(notification);
+
+            // Trigger show animation
+            setTimeout(() => {
+                notification.classList.add("show");
+            }, 10);
+
+            // Progress bar animation
+            const progressBar = notification.querySelector(".notification-progress");
+            setTimeout(() => {
+                progressBar.style.width = "0%";
+                progressBar.style.transition = `width ${duration}ms linear`;
+            }, 50);
+
+            // Auto dismiss
+            const timeoutId = setTimeout(() => {
+                dismissNotification(id);
+            }, duration);
+
+            // Store timeout ID for manual dismissal
+            notification.setAttribute("data-timeout", timeoutId);
+
+            // Limit to 5 notifications
+            const notifications = container.querySelectorAll(".notification");
+            if (notifications.length > 5) {
+                dismissNotification(notifications[0].getAttribute("data-id"));
+            }
+        }
+
+        function dismissNotification(id) {
+            const notification = document.querySelector(`[data-id="${id}"]`);
+            if (!notification) return;
+
+            // Clear auto-dismiss timeout
+            const timeoutId = notification.getAttribute("data-timeout");
+            if (timeoutId) clearTimeout(timeoutId);
+
+            // Hide animation
+            notification.classList.remove("show");
+            notification.classList.add("hide");
+
+            // Remove from DOM after animation
+            setTimeout(() => {
+                notification.remove();
+            }, 400);
+        }
+
+        // Enhanced notification helpers
+        function showSuccess(message, title = "Success!") {
+            showNotification(message, "success", title);
+        }
+
+        function showError(message, title = "Error!") {
+            showNotification(message, "error", title);
+        }
+
+        function showInfo(message, title = "Info") {
+            showNotification(message, "info", title);
+        }
+
+        function showWarning(message, title = "Warning!") {
+            showNotification(message, "warning", title);
+        }
+
+        function showBidNotification(message, title = "New Bid!") {
+            showNotification(message, "bid", title);
+        }
+
+        // Demo functions
+        function demoSuccess() {
+            showSuccess("You won the auction with a bid of $150!", "🏆 Auction Won!");
+        }
+
+        function demoError() {
+            showError("Connection to server lost. Please try again.", "Connection Failed");
+        }
+
+        function demoInfo() {
+            showInfo("Vintage Watch - Starting at $100 for 60s", "🔨 New Auction Available");
+        }
+
+        function demoWarning() {
+            showWarning("Only 10 seconds left to place your bid!", "⏰ Auction Ending Soon");
+        }
+
+        function demoBid() {
+            showBidNotification("$125 by John_Doe", "💰 Auction #42 Updated");
+        }
+
+        function demoAll() {
+            setTimeout(() => demoSuccess(), 0);
+            setTimeout(() => demoInfo(), 200);
+            setTimeout(() => demoBid(), 400);
+            setTimeout(() => demoWarning(), 600);
+            setTimeout(() => demoError(), 800);
+        }
+
+        // Show welcome notification on load
+        setTimeout(() => {
+            showInfo("Click the buttons above to see different notification types in action!", "Welcome to the Demo!");
+        }, 500);
+    </script>
+</body>
+</html>
