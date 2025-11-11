@@ -1214,11 +1214,15 @@
             </div>
           </div>
           <div style="display: flex; gap: 8px;">
-            <button class="action-button" style="flex: 1;" onclick="quickBidIncrement(${id}, 10)">
-              <i class="fas fa-plus"></i> +$10
+            <button class="action-button" style="flex: 1;" id="bid-btn-10-${id}" onclick="quickBidIncrement(${id}, 10)">
+              <i class="fas fa-plus"></i> Bid $${(
+                parseFloat(price) + 10
+              ).toFixed(2)}
             </button>
-            <button class="action-button" style="flex: 1;" onclick="quickBidIncrement(${id}, 50)">
-              <i class="fas fa-plus"></i> +$50
+            <button class="action-button" style="flex: 1;" id="bid-btn-50-${id}" onclick="quickBidIncrement(${id}, 50)">
+              <i class="fas fa-plus"></i> Bid $${(
+                parseFloat(price) + 50
+              ).toFixed(2)}
             </button>
           </div>
         `;
@@ -1242,6 +1246,21 @@
         if (currentBidEl)
           currentBidEl.textContent = `$${parseFloat(bid).toFixed(2)}`;
         if (bidderEl) bidderEl.textContent = bidder;
+
+        // Update bid button labels to show new amounts
+        const bidBtn10 = document.getElementById(`bid-btn-10-${id}`);
+        const bidBtn50 = document.getElementById(`bid-btn-50-${id}`);
+
+        if (bidBtn10) {
+          bidBtn10.innerHTML = `<i class="fas fa-plus"></i> Bid $${(
+            parseFloat(bid) + 10
+          ).toFixed(2)}`;
+        }
+        if (bidBtn50) {
+          bidBtn50.innerHTML = `<i class="fas fa-plus"></i> Bid $${(
+            parseFloat(bid) + 50
+          ).toFixed(2)}`;
+        }
 
         if (bidder === username) {
           showToast(
