@@ -30,9 +30,22 @@ public class Server {
     private static List<WebSocketHandler> wsHandlers = new CopyOnWriteArrayList<>();
 
     public static void main(String[] args) throws IOException {
+        System.out.println("===========================================");
+        System.out.println("   BidEasy - Enterprise Auction Platform");
+        System.out.println("===========================================");
+        
+        // Start UDP Notification Service (Feature 2)
+        UDPNotificationService.start();
+        
+        // Start Chat Manager with NIO (Feature 1)
+        ChatManager.start();
+        
+        // Start Secure Connection Manager (Feature 4)
+        SecureConnectionManager.start(senders);
+        
         // Start socket server for console clients
         ServerSocket serverSocket = new ServerSocket(PORT);
-        System.out.println("BidEasy Server started on port " + PORT);
+        System.out.println("Main Server started on port " + PORT);
 
         new Thread(() -> {
             try {
@@ -48,6 +61,13 @@ public class Server {
                 e.printStackTrace();
             }
         }).start();
+        
+        // Add shutdown hook
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("\nShutting down BidEasy Server...");
+            UDPNotificationService.shutdown();
+            System.out.println("Server shutdown complete.");
+        }));
 
         // Start WebSocket server
         WebSocketServer wsServer = new WebSocketServer(new InetSocketAddress(WS_PORT)) {
@@ -81,6 +101,8 @@ public class Server {
                     if (h.conn == conn) {
                         wsHandlers.remove(h);
                         senders.remove(h);
+                        // Broadcast updated user list
+                        broadcastUserList();
                         break;
                     }
                 }
@@ -129,6 +151,16 @@ public class Server {
         });
         httpServer.start();
         System.out.println("HTTP server started on port " + HTTP_PORT);
+        
+        System.out.println("\n===========================================");
+        System.out.println("All services started successfully!");
+        System.out.println("- Main Server: " + PORT);
+        System.out.println("- WebSocket: " + WS_PORT);
+        System.out.println("- HTTP: " + HTTP_PORT);
+        System.out.println("- Chat (NIO): 5002");
+        System.out.println("- UDP Notifications: 5003");
+        System.out.println("- Secure SSL/TLS: 5005");
+        System.out.println("===========================================\n");
     }
 
     public static void broadcast(String message) {
@@ -150,12 +182,95 @@ public class Server {
                 if (message.startsWith(Protocol.LOGIN + "|")) {
                     username = message.split("\\|")[1];
                     sendMessage(Protocol.welcomeMessage(username));
+                    
+                    System.out.println("WebSocket user " + username + " logged in. Sending existing auctions...");
+                    
+                    // Send all existing ongoing auctions to the newly connected client
+                    List<Auction> existingAuctions = AuctionManager.getAllAuctions();
+                    System.out.println("Found " + existingAuctions.size() + " existing auctions to send");
+                    
+                    for (Auction auction : existingAuctions) {
+                        String auctionMsg = Protocol.newAuctionMessage(
+                            auction.getId(), 
+                            auction.getName(), 
+                            auction.getStartPrice(), 
+                            auction.getDurationSec()
+                        );
+                        System.out.println("Sending auction to WebSocket user " + username + ": " + auctionMsg);
+                        sendMessage(auctionMsg);
+                        
+                        // If there's already a bid on this auction, send an update
+                        if (auction.getHighestBidder() != null) {
+                            String updateMsg = Protocol.updateMessage(
+                                auction.getId(), 
+                                auction.getCurrentBid(), 
+                                auction.getHighestBidder()
+                            );
+                            System.out.println("Sending update to WebSocket user " + username + ": " + updateMsg);
+                            sendMessage(updateMsg);
+                        }
+                    }
+                    
+                    // Send initial user list
+                    broadcastUserList();
                 } else {
                     sendMessage(Protocol.errorMessage("Please login first"));
                 }
             } else {
-                AuctionManager.processMessage(message, this);
+                // Handle chat messages
+                if (message.startsWith("CHAT_")) {
+                    handleChatMessage(message);
+                } else {
+                    // Handle auction messages
+                    AuctionManager.processMessage(message, this);
+                }
             }
+        }
+        
+        private void handleChatMessage(String message) {
+            String[] parts = message.split("\\|", 2);
+            String command = parts[0];
+            
+            if (command.equals("CHAT_GET_USERS")) {
+                sendUserList();
+            } else if (command.equals("CHAT_PRIVATE") && parts.length == 2) {
+                String[] privateParts = parts[1].split("\\|", 2);
+                if (privateParts.length == 2) {
+                    String targetUser = privateParts[0];
+                    String privateMsg = privateParts[1];
+                    sendPrivateMessage(targetUser, privateMsg);
+                }
+            }
+        }
+        
+        private void sendPrivateMessage(String targetUser, String message) {
+            // Find target user
+            WebSocketHandler targetHandler = null;
+            for (WebSocketHandler handler : wsHandlers) {
+                if (targetUser.equals(handler.getUsername())) {
+                    targetHandler = handler;
+                    break;
+                }
+            }
+            
+            if (targetHandler != null) {
+                // Send to recipient
+                targetHandler.sendMessage("CHAT_PRIVATE|" + username + "|" + message);
+                // Echo back to sender
+                sendMessage("CHAT_PRIVATE_SENT|" + targetUser + "|" + message);
+            } else {
+                sendMessage("CHAT_ERROR|User " + targetUser + " not found or offline");
+            }
+        }
+        
+        private void sendUserList() {
+            StringBuilder userList = new StringBuilder("CHAT_USERS|");
+            for (WebSocketHandler handler : wsHandlers) {
+                if (handler.getUsername() != null && !handler.getUsername().equals(username)) {
+                    userList.append(handler.getUsername()).append(",");
+                }
+            }
+            sendMessage(userList.toString());
         }
 
         @Override
@@ -168,6 +283,15 @@ public class Server {
         @Override
         public String getUsername() {
             return username;
+        }
+    }
+    
+    // Broadcast user list to all connected clients
+    public static void broadcastUserList() {
+        for (WebSocketHandler handler : wsHandlers) {
+            if (handler.getUsername() != null) {
+                handler.sendUserList();
+            }
         }
     }
 }

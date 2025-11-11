@@ -394,7 +394,7 @@
       </div>
     </div>
 
-    <!-- Modern Notification Container -->
+
     <div id="notification-container" class="notification-container"></div>
 
     <script>
@@ -926,7 +926,7 @@
 
       /* Main Dashboard */
       #main {
-        max-width: 1400px;
+        max-width: 1600px;
         margin: 20px auto;
         background: #1a1a2e;
         border-radius: 16px;
@@ -943,6 +943,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        flex-wrap: wrap;
       }
 
       .header-left {
@@ -1047,14 +1048,15 @@
         background: #16213e;
         border-bottom: 2px solid #2d2d44;
         padding: 0 32px;
+        overflow-x: auto;
       }
 
       .tab {
         background: none;
         border: none;
-        padding: 16px 24px;
+        padding: 16px 20px;
         cursor: pointer;
-        font-size: 15px;
+        font-size: 14px;
         font-weight: 600;
         color: #b0b3b8;
         transition: all 0.3s;
@@ -1062,6 +1064,7 @@
         display: flex;
         align-items: center;
         gap: 8px;
+        white-space: nowrap;
       }
 
       .tab:hover {
@@ -1127,7 +1130,9 @@
         font-size: 14px;
       }
 
-      input {
+      input,
+      textarea,
+      select {
         width: 100%;
         padding: 12px 16px;
         border: 2px solid #2d2d44;
@@ -1139,14 +1144,17 @@
         color: #e4e6eb;
       }
 
-      input:focus {
+      input:focus,
+      textarea:focus,
+      select:focus {
         outline: none;
         border-color: #667eea;
         box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
         background: #1e1e2e;
       }
 
-      button[type="submit"] {
+      button[type="submit"],
+      .action-button {
         background: linear-gradient(135deg, #667eea, #764ba2);
         color: white;
         padding: 14px 28px;
@@ -1162,7 +1170,8 @@
         box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
       }
 
-      button[type="submit"]:hover {
+      button[type="submit"]:hover,
+      .action-button:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
       }
@@ -1180,7 +1189,6 @@
         padding: 24px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         transition: all 0.3s;
-        border-left: 4px solid #667eea;
         border: 1px solid #2d2d44;
         border-left: 4px solid #667eea;
       }
@@ -1188,181 +1196,197 @@
       .auction:hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-        border-color: #667eea;
       }
 
       .auction.ended {
         opacity: 0.7;
         border-left-color: #dc3545;
-        background: #1a1a2e;
       }
 
-      .auction-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: start;
-        margin-bottom: 20px;
-      }
-
-      .auction-title {
-        font-size: 18px;
-        font-weight: 700;
-        color: #e4e6eb;
-        margin-bottom: 4px;
-      }
-
-      .auction-id {
-        background: #2d2d44;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-        color: #b0b3b8;
-      }
-
-      .auction-details {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-        margin-bottom: 20px;
-      }
-
-      .detail-item {
+      /* Chat Box */
+      .chat-container {
+        background: #1e1e2e;
+        border-radius: 12px;
+        border: 1px solid #2d2d44;
+        height: 500px;
         display: flex;
         flex-direction: column;
       }
 
-      .detail-label {
-        font-size: 12px;
-        color: #b0b3b8;
-        margin-bottom: 4px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      .detail-value {
-        font-size: 16px;
-        font-weight: 700;
-        color: #e4e6eb;
-      }
-
-      .detail-value.price {
-        color: #28a745;
-      }
-
-      .detail-value.timer {
-        color: #667eea;
-      }
-
-      .detail-value.timer.urgent {
-        color: #dc3545;
-        animation: pulse 1s infinite;
-      }
-
-      @keyframes pulse {
-        0%,
-        100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.6;
-        }
-      }
-
-      .auction-actions {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-      }
-
-      .bid-button {
+      .chat-messages {
         flex: 1;
-        min-width: 120px;
-        background: #667eea;
-        color: white;
-        border: none;
-        padding: 10px 16px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 600;
-        transition: all 0.3s;
+        padding: 20px;
+        overflow-y: auto;
         display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
+        flex-direction: column;
+        gap: 12px;
       }
 
-      .bid-button:hover {
-        background: #5568d3;
-        transform: translateY(-2px);
-      }
-
-      .winner-badge {
-        background: linear-gradient(135deg, #28a745, #20c997);
-        color: white;
+      .chat-message {
         padding: 12px 16px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-weight: 600;
+        border-radius: 12px;
+        max-width: 70%;
+        word-wrap: break-word;
       }
 
-      /* Activity Log */
-      .activity-section {
+      .chat-message.own {
+        background: #667eea;
+        align-self: flex-end;
+        color: white;
+      }
+
+      .chat-message.other {
+        background: #2d2d44;
+        align-self: flex-start;
+      }
+
+      .chat-message.system {
+        background: #1a1a2e;
+        align-self: center;
+        font-style: italic;
+        color: #b0b3b8;
+        font-size: 13px;
+      }
+
+      .chat-sender {
+        font-weight: bold;
+        margin-bottom: 4px;
+        font-size: 13px;
+      }
+
+      .chat-input-area {
+        padding: 16px;
+        border-top: 1px solid #2d2d44;
+        display: flex;
+        gap: 8px;
+      }
+
+      .chat-input-area input {
+        flex: 1;
+      }
+
+      .chat-input-area button {
+        padding: 12px 24px;
+      }
+
+      /* UDP Notifications Panel */
+      .notifications-panel {
         background: #1e1e2e;
         border-radius: 12px;
-        padding: 24px;
-        margin-bottom: 24px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         border: 1px solid #2d2d44;
+        padding: 20px;
+        max-height: 500px;
+        overflow-y: auto;
       }
 
-      .activity-section h3 {
-        font-size: 16px;
-        font-weight: 700;
-        color: #e4e6eb;
-        margin-bottom: 16px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .activity-item {
-        padding: 12px;
+      .notification-item {
+        padding: 12px 16px;
         background: #16213e;
         border-radius: 8px;
-        margin-bottom: 8px;
+        margin-bottom: 12px;
+        border-left: 4px solid #667eea;
         display: flex;
         align-items: center;
         gap: 12px;
-        border: 1px solid #2d2d44;
       }
 
-      .activity-icon {
+      .notification-item.alert {
+        border-left-color: #ff9800;
+      }
+
+      .notification-item.warning {
+        border-left-color: #dc3545;
+      }
+
+      .notification-icon {
         width: 36px;
         height: 36px;
-        border-radius: 8px;
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 16px;
       }
 
-      .activity-icon.create {
+      .notification-icon.info {
         background: rgba(102, 126, 234, 0.2);
         color: #667eea;
       }
 
-      .activity-icon.bid {
+      .notification-icon.alert {
         background: rgba(255, 152, 0, 0.2);
         color: #ff9800;
       }
 
-      /* Notifications */
-      .notification {
+      .notification-icon.warning {
+        background: rgba(220, 53, 69, 0.2);
+        color: #dc3545;
+      }
+
+      /* File Upload Area */
+      .file-upload-area {
+        background: #1e1e2e;
+        border: 2px dashed #2d2d44;
+        border-radius: 12px;
+        padding: 40px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .file-upload-area:hover {
+        border-color: #667eea;
+        background: #16213e;
+      }
+
+      .file-upload-area.dragover {
+        border-color: #667eea;
+        background: #16213e;
+      }
+
+      .file-list {
+        margin-top: 20px;
+      }
+
+      .file-item {
+        background: #16213e;
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      /* Stats Panel */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .stat-card {
+        background: #1e1e2e;
+        border-radius: 12px;
+        padding: 24px;
+        border: 1px solid #2d2d44;
+      }
+
+      .stat-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: #667eea;
+        margin: 8px 0;
+      }
+
+      .stat-label {
+        color: #b0b3b8;
+        font-size: 14px;
+      }
+
+      /* Toast Notification */
+      .toast {
         position: fixed;
         top: 24px;
         right: 24px;
@@ -1376,40 +1400,19 @@
         align-items: center;
         gap: 12px;
         min-width: 300px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
       }
 
-      .notification.success {
+      .toast.success {
         background: linear-gradient(135deg, #28a745, #20c997);
       }
 
-      .notification.error {
+      .toast.error {
         background: linear-gradient(135deg, #dc3545, #c82333);
       }
 
-      .notification.show {
+      .toast.show {
         opacity: 1;
-      }
-
-      .notification i {
-        font-size: 20px;
-      }
-
-      /* Empty State */
-      .empty-state {
-        text-align: center;
-        padding: 60px 20px;
-      }
-
-      .empty-state i {
-        font-size: 64px;
-        color: #2d2d44;
-        margin-bottom: 16px;
-      }
-
-      .empty-state p {
-        color: #b0b3b8;
-        font-size: 15px;
       }
 
       /* Responsive */
@@ -1420,7 +1423,6 @@
         }
 
         .tabs {
-          overflow-x: auto;
           padding: 0 16px;
         }
 
@@ -1432,20 +1434,21 @@
           grid-template-columns: 1fr;
         }
 
-        .auction-details {
+        .stats-grid {
           grid-template-columns: 1fr;
         }
       }
     </style>
   </head>
   <body>
+    <!-- Login Screen -->
     <div id="login" style="display: block">
       <div class="login-header">
         <div class="logo-container">
           <i class="fas fa-gavel"></i>
         </div>
         <h1>BidEasy</h1>
-        <p>Enterprise Auction Platform</p>
+        <p>Enterprise Auction Platform with Private Chat</p>
       </div>
       <form id="loginForm">
         <div class="form-group">
@@ -1464,6 +1467,7 @@
       </form>
     </div>
 
+    <!-- Main Dashboard -->
     <div id="main" style="display: none">
       <div class="dashboard-header">
         <div class="header-left">
@@ -1472,7 +1476,10 @@
           </div>
           <div class="header-title">
             <h1>BidEasy Dashboard</h1>
-            <p>Real-time auction management platform</p>
+            <p>
+              Real-time auction platform with private chat, notifications &
+              security
+            </p>
           </div>
         </div>
         <div class="user-info">
@@ -1494,21 +1501,35 @@
         <button class="tab" onclick="openTab(event, 'createAuction')">
           <i class="fas fa-plus-circle"></i> Create Auction
         </button>
-        <button class="tab" onclick="openTab(event, 'placeBid')">
-          <i class="fas fa-hand-holding-usd"></i> Place Bid
+        <button class="tab" onclick="openTab(event, 'chatTab')">
+          <i class="fas fa-comments"></i> Chat (NIO)
+        </button>
+        <button class="tab" onclick="openTab(event, 'notificationsTab')">
+          <i class="fas fa-bell"></i> UDP Alerts
         </button>
         <button class="tab" onclick="openTab(event, 'myActivity')">
           <i class="fas fa-chart-line"></i> My Activity
         </button>
       </div>
 
+      <!-- Active Auctions Tab -->
       <div id="auctionList" class="tab-content active">
         <div class="content-header">
           <h2><i class="fas fa-fire"></i> Active Auctions</h2>
         </div>
         <div id="auctions" class="auctions-grid">
-          <div class="empty-state">
-            <i class="fas fa-inbox"></i>
+          <div
+            style="
+              grid-column: 1/-1;
+              text-align: center;
+              padding: 60px;
+              color: #b0b3b8;
+            "
+          >
+            <i
+              class="fas fa-inbox"
+              style="font-size: 64px; margin-bottom: 16px; color: #2d2d44"
+            ></i>
             <p>
               No active auctions at the moment.<br />Be the first to create one!
             </p>
@@ -1516,6 +1537,7 @@
         </div>
       </div>
 
+      <!-- Create Auction Tab -->
       <div id="createAuction" class="tab-content">
         <div class="content-header">
           <h2><i class="fas fa-plus-circle"></i> Create New Auction</h2>
@@ -1556,45 +1578,129 @@
             Launch Auction
           </button>
         </form>
-        <div id="createMessage"></div>
       </div>
 
-      <div id="placeBid" class="tab-content">
+      <!-- Chat Tab (Feature 1 - NIO) -->
+      <div id="chatTab" class="tab-content">
         <div class="content-header">
-          <h2><i class="fas fa-hand-holding-usd"></i> Place Your Bid</h2>
+          <h2><i class="fas fa-comments"></i> Private Chat (Java NIO)</h2>
+          <span
+            style="
+              background: #2d2d44;
+              padding: 6px 12px;
+              border-radius: 8px;
+              font-size: 13px;
+            "
+          >
+            <i class="fas fa-info-circle"></i> Non-blocking I/O
+          </span>
         </div>
-        <form id="bidForm">
-          <div class="form-group">
-            <label><i class="fas fa-hashtag"></i> Auction ID</label>
-            <input
-              type="number"
-              id="bidAuctionId"
-              min="0"
-              placeholder="Enter auction ID"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label
-              ><i class="fas fa-dollar-sign"></i> Your Bid Amount ($)</label
+
+        <div style="display: grid; grid-template-columns: 250px 1fr; gap: 20px">
+          <!-- User List -->
+          <div
+            style="
+              background: #1e1e2e;
+              border-radius: 12px;
+              border: 1px solid #2d2d44;
+              padding: 16px;
+            "
+          >
+            <h3 style="margin-bottom: 16px; font-size: 16px">
+              <i class="fas fa-users"></i> Online Users
+            </h3>
+            <div
+              id="userList"
+              style="display: flex; flex-direction: column; gap: 8px"
             >
-            <input
-              type="number"
-              id="bidAmount"
-              step="0.01"
-              min="0.01"
-              placeholder="150.00"
-              required
-            />
+              <div
+                style="
+                  color: #b0b3b8;
+                  text-align: center;
+                  padding: 20px;
+                  font-size: 13px;
+                "
+              >
+                <i
+                  class="fas fa-user-friends"
+                  style="font-size: 32px; opacity: 0.5; margin-bottom: 8px"
+                ></i>
+                <p>No users online</p>
+              </div>
+            </div>
           </div>
-          <button type="submit">
-            <i class="fas fa-gavel"></i>
-            Submit Bid
-          </button>
-        </form>
-        <div id="bidMessage"></div>
+
+          <!-- Chat Area -->
+          <div class="chat-container">
+            <div
+              style="
+                background: #16213e;
+                padding: 12px 20px;
+                border-bottom: 1px solid #2d2d44;
+              "
+            >
+              <span id="chatWith" style="font-weight: 600; color: #667eea">
+                <i class="fas fa-comment-dots"></i> Select a user to chat
+              </span>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+              <div class="chat-message system">
+                <i class="fas fa-info-circle"></i> Select a user from the list
+                to start chatting
+              </div>
+            </div>
+            <div class="chat-input-area">
+              <input
+                type="text"
+                id="chatInput"
+                placeholder="Select a user first..."
+                disabled
+                onkeypress="if(event.key==='Enter') sendChatMessage()"
+              />
+              <button
+                class="action-button"
+                id="sendChatBtn"
+                onclick="sendChatMessage()"
+                disabled
+              >
+                <i class="fas fa-paper-plane"></i> Send
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
+      <!-- UDP Notifications Tab (Feature 2) -->
+      <div id="notificationsTab" class="tab-content">
+        <div class="content-header">
+          <h2><i class="fas fa-bell"></i> UDP Broadcast Notifications</h2>
+          <span
+            style="
+              background: #2d2d44;
+              padding: 6px 12px;
+              border-radius: 8px;
+              font-size: 13px;
+            "
+          >
+            <i class="fas fa-info-circle"></i> Connectionless Protocol
+          </span>
+        </div>
+        <div class="notifications-panel" id="notificationsPanel">
+          <div class="notification-item">
+            <div class="notification-icon info">
+              <i class="fas fa-info-circle"></i>
+            </div>
+            <div>
+              <strong>UDP Notifications Active</strong>
+              <p style="color: #b0b3b8; font-size: 13px; margin: 4px 0 0 0">
+                Real-time alerts via UDP broadcasting (Member 2's feature)
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- My Activity Tab -->
       <div id="myActivity" class="tab-content">
         <div class="content-header">
           <h2><i class="fas fa-chart-line"></i> My Activity</h2>
@@ -1603,7 +1709,8 @@
       </div>
     </div>
 
-    <div id="notification" class="notification"></div>
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
 
     <script>
       let ws;
@@ -1611,6 +1718,7 @@
       let myAuctions = [];
       let myBids = [];
 
+      // Login
       document
         .getElementById("loginForm")
         .addEventListener("submit", function (e) {
@@ -1621,7 +1729,7 @@
       function login() {
         username = document.getElementById("username").value.trim();
         if (!username) {
-          showNotification("Please enter a username", "error");
+          showToast("Please enter a username", "error");
           return;
         }
 
@@ -1631,6 +1739,9 @@
           ws.onopen = () => {
             ws.send("LOGIN|" + username);
             document.getElementById("statusText").textContent = "Connecting...";
+
+            // Connect to NIO Chat
+            connectToChat();
           };
 
           ws.onmessage = handleMessage;
@@ -1639,20 +1750,20 @@
             const statusEl = document.getElementById("connectionStatus");
             statusEl.className = "connection-status status-offline";
             document.getElementById("statusText").textContent = "Offline";
-            showNotification(
+            showToast(
               "Connection lost. Please refresh and try again.",
               "error"
             );
           };
 
           ws.onerror = () => {
-            showNotification(
+            showToast(
               "Connection error. Make sure the server is running.",
               "error"
             );
           };
         } catch (error) {
-          showNotification(
+          showToast(
             "Failed to connect. Make sure the server is running on localhost:5001",
             "error"
           );
@@ -1662,6 +1773,12 @@
       function handleMessage(event) {
         const msg = event.data;
         console.log("Received:", msg);
+
+        // Handle chat messages
+        if (msg.startsWith("CHAT_")) {
+          handleChatMessage(msg);
+          return;
+        }
 
         if (msg.startsWith("WELCOME|")) {
           document.getElementById("login").style.display = "none";
@@ -1673,22 +1790,521 @@
           const statusEl = document.getElementById("connectionStatus");
           statusEl.className = "connection-status status-online";
           document.getElementById("statusText").textContent = "Online";
-          showNotification("Welcome to BidEasy!", "success");
+          showToast("Welcome to BidEasy!", "success");
+          updateMyActivity();
+
+          // Initialize chat after login
+          setTimeout(() => connectToChat(), 500);
         } else if (msg.startsWith("NEW_AUCTION|")) {
           const parts = msg.split("|");
           addAuction(parts[1], parts[2], parts[3], parts[4]);
+          addUDPNotification("NEW_AUCTION", `New auction: ${parts[2]}`, "info");
         } else if (msg.startsWith("UPDATE|")) {
           const parts = msg.split("|");
           updateAuction(parts[1], parts[2], parts[3]);
+          addUDPNotification(
+            "HIGH_BID",
+            `${parts[3]} bid $${parts[2]} on auction #${parts[1]}`,
+            "alert"
+          );
         } else if (msg.startsWith("END|")) {
           const parts = msg.split("|");
           endAuction(parts[1], parts[2], parts[3]);
+          addUDPNotification(
+            "AUCTION_ENDED",
+            `Auction #${parts[1]} ended. Winner: ${parts[2]}`,
+            "warning"
+          );
         } else if (msg.startsWith("ERROR|")) {
           const errorMsg = msg.split("|")[1];
-          showNotification("Error: " + errorMsg, "error");
+          showToast("Error: " + errorMsg, "error");
         }
       }
 
+      // Chat System (Feature 1 - NIO) - Private Messaging
+      let chatSocket = null;
+      let selectedChatUser = null;
+      let onlineUsers = new Set();
+      let chatHistory = {}; // Store chat messages per user
+
+      function connectToChat() {
+        // Use the main WebSocket connection for chat
+        chatSocket = ws;
+
+        if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+          // Request initial user list
+          chatSocket.send("CHAT_GET_USERS");
+          console.log("Chat initialized on main WebSocket");
+        } else {
+          console.error("Main WebSocket not connected");
+        }
+      }
+
+      function handleChatMessage(msg) {
+        if (msg.startsWith("CHAT_USERS|")) {
+          const usersList = msg.split("|")[1];
+          updateUserList(usersList);
+        } else if (msg.startsWith("CHAT_PRIVATE|")) {
+          const parts = msg.split("|");
+          const sender = parts[1];
+          const message = parts[2];
+          receivePrivateMessage(sender, message);
+        } else if (msg.startsWith("CHAT_PRIVATE_SENT|")) {
+          const parts = msg.split("|");
+          const recipient = parts[1];
+          const message = parts[2];
+          showPrivateMessageSent(recipient, message);
+        } else if (msg.startsWith("CHAT_ERROR|")) {
+          const errorMsg = msg.split("|")[1];
+          showToast(errorMsg, "error");
+        }
+      }
+      function updateUserList(usersString) {
+        const users = usersString.split(",").filter((u) => u && u !== username);
+        onlineUsers = new Set(users);
+
+        const userListDiv = document.getElementById("userList");
+        userListDiv.innerHTML = "";
+
+        if (users.length === 0) {
+          userListDiv.innerHTML = `
+            <div style="color: #b0b3b8; text-align: center; padding: 20px; font-size: 13px;">
+              <i class="fas fa-user-friends" style="font-size: 32px; opacity: 0.5; margin-bottom: 8px;"></i>
+              <p>No other users online</p>
+            </div>
+          `;
+          return;
+        }
+
+        users.forEach((user) => {
+          const userDiv = document.createElement("div");
+          userDiv.className = "user-item";
+          userDiv.style.cssText = `
+            padding: 12px;
+            background: ${selectedChatUser === user ? "#667eea" : "#16213e"};
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+          `;
+
+          const unreadCount =
+            chatHistory[user] && chatHistory[user].unread
+              ? chatHistory[user].unread
+              : 0;
+
+          userDiv.innerHTML = `
+            <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 14px;">
+              ${user.charAt(0).toUpperCase()}
+            </div>
+            <div style="flex: 1;">
+              <div style="font-weight: 600; ${
+                selectedChatUser === user ? "color: white" : "color: #e4e6eb"
+              }">${user}</div>
+              ${
+                unreadCount > 0
+                  ? `<span style="background: #dc3545; color: white; padding: 2px 6px; border-radius: 10px; font-size: 11px;">${unreadCount}</span>`
+                  : ""
+              }
+            </div>
+          `;
+
+          userDiv.onmouseenter = () => {
+            if (selectedChatUser !== user) {
+              userDiv.style.background = "#1e1e2e";
+            }
+          };
+          userDiv.onmouseleave = () => {
+            if (selectedChatUser !== user) {
+              userDiv.style.background = "#16213e";
+            }
+          };
+
+          userDiv.onclick = () => selectUser(user);
+          userListDiv.appendChild(userDiv);
+        });
+      }
+
+      function selectUser(user) {
+        selectedChatUser = user;
+        document.getElementById(
+          "chatWith"
+        ).innerHTML = `<i class="fas fa-user"></i> Chatting with <strong>${user}</strong>`;
+        document.getElementById("chatInput").disabled = false;
+        document.getElementById("chatInput").placeholder = `Message ${user}...`;
+        document.getElementById("sendChatBtn").disabled = false;
+
+        // Mark messages as read
+        if (chatHistory[user]) {
+          chatHistory[user].unread = 0;
+        }
+
+        // Update user list to refresh selection
+        updateUserList(Array.from(onlineUsers).join(","));
+
+        // Load chat history for this user
+        loadChatHistory(user);
+      }
+
+      function loadChatHistory(user) {
+        const messagesDiv = document.getElementById("chatMessages");
+        messagesDiv.innerHTML = "";
+
+        if (!chatHistory[user] || chatHistory[user].messages.length === 0) {
+          messagesDiv.innerHTML = `
+            <div class="chat-message system">
+              <i class="fas fa-info-circle"></i> Start chatting with ${user}
+            </div>
+          `;
+        } else {
+          chatHistory[user].messages.forEach((msg) => {
+            const msgDiv = document.createElement("div");
+            msgDiv.className = `chat-message ${msg.type}`;
+            if (msg.type === "other") {
+              msgDiv.innerHTML = `<div class="chat-sender">${msg.sender}</div>${msg.text}`;
+            } else {
+              msgDiv.textContent = msg.text;
+            }
+            messagesDiv.appendChild(msgDiv);
+          });
+          messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+      }
+
+      function sendChatMessage() {
+        if (!selectedChatUser) {
+          showToast("Please select a user first", "error");
+          return;
+        }
+
+        const input = document.getElementById("chatInput");
+        const message = input.value.trim();
+
+        if (message && chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+          // Send private message
+          chatSocket.send(`CHAT_PRIVATE|${selectedChatUser}|${message}`);
+          input.value = "";
+        }
+      }
+
+      function receivePrivateMessage(sender, message) {
+        // Store in history
+        if (!chatHistory[sender]) {
+          chatHistory[sender] = { messages: [], unread: 0 };
+        }
+        chatHistory[sender].messages.push({
+          type: "other",
+          sender: sender,
+          text: message,
+        });
+
+        // If chatting with this user, show message
+        if (selectedChatUser === sender) {
+          showChatMessage("other", message, sender);
+        } else {
+          // Increment unread count
+          chatHistory[sender].unread = (chatHistory[sender].unread || 0) + 1;
+          updateUserList(Array.from(onlineUsers).join(","));
+          showToast(`New message from ${sender}`, "success");
+        }
+      }
+
+      function showPrivateMessageSent(recipient, message) {
+        // Store in history
+        if (!chatHistory[recipient]) {
+          chatHistory[recipient] = { messages: [], unread: 0 };
+        }
+        chatHistory[recipient].messages.push({
+          type: "own",
+          sender: username,
+          text: message,
+        });
+
+        // If chatting with this user, show message
+        if (selectedChatUser === recipient) {
+          showChatMessage("own", message);
+        }
+      }
+
+      function showChatMessage(type, text, sender = username) {
+        const messagesDiv = document.getElementById("chatMessages");
+        const msgDiv = document.createElement("div");
+        msgDiv.className = "chat-message " + type;
+
+        if (type === "other") {
+          msgDiv.innerHTML = `<div class="chat-sender">${sender}</div>${text}`;
+        } else if (type === "own") {
+          msgDiv.textContent = text;
+        } else {
+          msgDiv.innerHTML = `<i class="fas fa-info-circle"></i> ${text}`;
+        }
+
+        messagesDiv.appendChild(msgDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+
+      // UDP Notifications (Feature 2)
+      function addUDPNotification(type, message, level) {
+        const panel = document.getElementById("notificationsPanel");
+        const notifDiv = document.createElement("div");
+        notifDiv.className = "notification-item " + level;
+
+        let icon = "info-circle";
+        if (level === "alert") icon = "exclamation-triangle";
+        if (level === "warning") icon = "exclamation-circle";
+
+        notifDiv.innerHTML = `
+          <div class="notification-icon ${level}">
+            <i class="fas fa-${icon}"></i>
+          </div>
+          <div>
+            <strong>${type.replace(/_/g, " ")}</strong>
+            <p style="color: #b0b3b8; font-size: 13px; margin: 4px 0 0 0;">
+              ${message}
+            </p>
+            <small style="color: #666; font-size: 11px;">${new Date().toLocaleTimeString()}</small>
+          </div>
+        `;
+
+        panel.insertBefore(notifDiv, panel.firstChild);
+
+        // Keep only last 20 notifications
+        while (panel.children.length > 20) {
+          panel.removeChild(panel.lastChild);
+        }
+      }
+
+      // Auctions
+      function addAuction(id, name, price, duration) {
+        const auctionsDiv = document.getElementById("auctions");
+        if (auctionsDiv.querySelector('[style*="grid-column"]')) {
+          auctionsDiv.innerHTML = "";
+        }
+
+        const div = document.createElement("div");
+        div.id = "auction-" + id;
+        div.className = "auction";
+        div.innerHTML = `
+          <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+            <h3 style="color: #667eea;">${name}</h3>
+            <span style="background: #2d2d44; padding: 4px 12px; border-radius: 8px; font-size: 12px;">ID: ${id}</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+            <div>
+              <small style="color: #b0b3b8;">Starting Price</small>
+              <div style="font-size: 18px; font-weight: bold; color: #28a745;">$${parseFloat(
+                price
+              ).toFixed(2)}</div>
+            </div>
+            <div>
+              <small style="color: #b0b3b8;">Current Bid</small>
+              <div style="font-size: 18px; font-weight: bold; color: #28a745;" id="current-bid-${id}">$${parseFloat(
+          price
+        ).toFixed(2)}</div>
+            </div>
+            <div>
+              <small style="color: #b0b3b8;">Highest Bidder</small>
+              <div id="bidder-${id}">None yet</div>
+            </div>
+            <div>
+              <small style="color: #b0b3b8;">Time Left</small>
+              <div style="color: #667eea; font-weight: bold;" id="timer-${id}">${duration}s</div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="action-button" style="flex: 1;" id="bid-btn-10-${id}" onclick="quickBidIncrement(${id}, 10)">
+              <i class="fas fa-plus"></i> Bid $${(
+                parseFloat(price) + 10
+              ).toFixed(2)}
+            </button>
+            <button class="action-button" style="flex: 1;" id="bid-btn-50-${id}" onclick="quickBidIncrement(${id}, 50)">
+              <i class="fas fa-plus"></i> Bid $${(
+                parseFloat(price) + 50
+              ).toFixed(2)}
+            </button>
+          </div>
+        `;
+        auctionsDiv.appendChild(div);
+
+        startTimer(id, parseInt(duration));
+        showToast(`New auction: ${name}`, "success");
+      }
+
+      function updateAuction(id, bid, bidder) {
+        const currentBidEl = document.getElementById(`current-bid-${id}`);
+        const bidderEl = document.getElementById(`bidder-${id}`);
+
+        if (currentBidEl)
+          currentBidEl.textContent = `$${parseFloat(bid).toFixed(2)}`;
+        if (bidderEl) bidderEl.textContent = bidder;
+
+        // Update bid button labels to show new amounts
+        const bidBtn10 = document.getElementById(`bid-btn-10-${id}`);
+        const bidBtn50 = document.getElementById(`bid-btn-50-${id}`);
+
+        if (bidBtn10) {
+          bidBtn10.innerHTML = `<i class="fas fa-plus"></i> Bid $${(
+            parseFloat(bid) + 10
+          ).toFixed(2)}`;
+        }
+        if (bidBtn50) {
+          bidBtn50.innerHTML = `<i class="fas fa-plus"></i> Bid $${(
+            parseFloat(bid) + 50
+          ).toFixed(2)}`;
+        }
+
+        if (bidder === username) {
+          showToast(
+            `You are now the highest bidder on auction ${id}!`,
+            "success"
+          );
+        }
+      }
+
+      function endAuction(id, winner, price) {
+        const div = document.getElementById("auction-" + id);
+        if (div) {
+          div.className = "auction ended";
+          div.style.opacity = "0.6";
+        }
+
+        if (winner === username) {
+          showToast(
+            `🏆 Congratulations! You won auction ${id} with $${price}!`,
+            "success"
+          );
+        }
+      }
+
+      function startTimer(auctionId, duration) {
+        let timeLeft = duration;
+        const timerElement = document.getElementById(`timer-${auctionId}`);
+
+        const interval = setInterval(() => {
+          timeLeft--;
+          if (timerElement) {
+            timerElement.textContent = timeLeft + "s";
+            if (timeLeft <= 10) {
+              timerElement.style.color = "#dc3545";
+              if (timeLeft === 10) {
+                addUDPNotification(
+                  "ENDING_SOON",
+                  `Auction #${auctionId} ending in 10 seconds!`,
+                  "warning"
+                );
+              }
+            }
+          }
+          if (timeLeft <= 0) {
+            clearInterval(interval);
+          }
+        }, 1000);
+      }
+
+      function quickBid(auctionId, amount) {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(`BID|${auctionId}|${amount}|${username}`);
+          showToast(
+            `Bid placed: $${amount.toFixed(2)} on auction ${auctionId}`,
+            "success"
+          );
+          myBids.push({ id: auctionId, amount });
+          updateMyActivity();
+        } else {
+          showToast("Connection lost. Please refresh the page.", "error");
+        }
+      }
+
+      function quickBidIncrement(auctionId, increment) {
+        const currentBidEl = document.getElementById(
+          `current-bid-${auctionId}`
+        );
+        if (!currentBidEl) {
+          showToast("Auction not found", "error");
+          return;
+        }
+
+        // Extract current bid value
+        const currentBidText = currentBidEl.textContent.replace("$", "");
+        const currentBid = parseFloat(currentBidText);
+        const newBid = currentBid + increment;
+
+        quickBid(auctionId, newBid);
+      }
+
+      // Create auction
+      document
+        .getElementById("createForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const name = document.getElementById("name").value.trim();
+          const price = document.getElementById("price").value;
+          const duration = document.getElementById("duration").value;
+
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(`CREATE|${name}|${price}|${duration}`);
+            showToast("Auction created successfully!", "success");
+            document.getElementById("createForm").reset();
+            myAuctions.push({ name, price, duration });
+            updateMyActivity();
+          } else {
+            showToast("Connection lost. Please refresh the page.", "error");
+          }
+        });
+
+      // My Activity
+      function updateMyActivity() {
+        const activityLog = document.getElementById("activityLog");
+        let html = "";
+
+        html +=
+          '<div style="background: #1e1e2e; border-radius: 12px; padding: 24px; border: 1px solid #2d2d44; margin-bottom: 20px;">';
+        html +=
+          '<h3 style="margin-bottom: 16px;"><i class="fas fa-plus-circle"></i> Auctions Created</h3>';
+        if (myAuctions.length === 0) {
+          html +=
+            '<p style="color: #b0b3b8;">You haven\'t created any auctions yet.</p>';
+        } else {
+          myAuctions.forEach((auction) => {
+            html += `
+              <div style="background: #16213e; padding: 12px 16px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #667eea;">
+                <strong>${auction.name}</strong><br>
+                <small style="color: #b0b3b8;">Starting at $${parseFloat(
+                  auction.price
+                ).toFixed(2)} • Duration: ${auction.duration}s</small>
+              </div>
+            `;
+          });
+        }
+        html += "</div>";
+
+        html +=
+          '<div style="background: #1e1e2e; border-radius: 12px; padding: 24px; border: 1px solid #2d2d44;">';
+        html +=
+          '<h3 style="margin-bottom: 16px;"><i class="fas fa-hand-holding-usd"></i> Bids Placed</h3>';
+        if (myBids.length === 0) {
+          html +=
+            '<p style="color: #b0b3b8;">You haven\'t placed any bids yet.</p>';
+        } else {
+          myBids.forEach((bid) => {
+            html += `
+              <div style="background: #16213e; padding: 12px 16px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid #ff9800;">
+                <strong>Bid on Auction #${bid.id}</strong><br>
+                <small style="color: #b0b3b8;">Amount: $${parseFloat(
+                  bid.amount
+                ).toFixed(2)}</small>
+              </div>
+            `;
+          });
+        }
+        html += "</div>";
+
+        activityLog.innerHTML = html;
+      }
+
+      // Tab navigation
       function openTab(evt, tabName) {
         const tabcontent = document.getElementsByClassName("tab-content");
         for (let i = 0; i < tabcontent.length; i++) {
@@ -1702,275 +2318,29 @@
         evt.currentTarget.classList.add("active");
       }
 
-      function addAuction(id, name, price, duration) {
-        const auctionsDiv = document.getElementById("auctions");
-        if (auctionsDiv.querySelector(".empty-state")) {
-          auctionsDiv.innerHTML = "";
-        }
-
-        const div = document.createElement("div");
-        div.id = "auction-" + id;
-        div.className = "auction";
-        div.innerHTML = `
-                <div class="auction-header">
-                    <div>
-                        <div class="auction-title">${name}</div>
-                    </div>
-                    <div class="auction-id">ID: ${id}</div>
-                </div>
-                <div class="auction-details">
-                    <div class="detail-item">
-                        <div class="detail-label"><i class="fas fa-dollar-sign"></i> Starting Price</div>
-                        <div class="detail-value price">$${parseFloat(
-                          price
-                        ).toFixed(2)}</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label"><i class="fas fa-chart-line"></i> Current Bid</div>
-                        <div class="detail-value price" id="current-bid-${id}">$${parseFloat(
-          price
-        ).toFixed(2)}</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label"><i class="fas fa-user"></i> Highest Bidder</div>
-                        <div class="detail-value" id="bidder-${id}">None yet</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label"><i class="fas fa-clock"></i> Time Remaining</div>
-                        <div class="detail-value timer" id="timer-${id}">${duration}s</div>
-                    </div>
-                </div>
-                <div class="auction-actions">
-                    <button class="bid-button" onclick="quickBid(${id}, ${
-          parseFloat(price) + 1
-        })">
-                        <i class="fas fa-plus"></i> $${(
-                          parseFloat(price) + 1
-                        ).toFixed(2)}
-                    </button>
-                    <button class="bid-button" onclick="quickBid(${id}, ${
-          parseFloat(price) + 5
-        })">
-                        <i class="fas fa-plus"></i> $${(
-                          parseFloat(price) + 5
-                        ).toFixed(2)}
-                    </button>
-                </div>
-            `;
-        auctionsDiv.appendChild(div);
-        startTimer(id, parseInt(duration));
-        showNotification(`New auction: ${name}`, "success");
-      }
-
-      function updateAuction(id, bid, bidder) {
-        const currentBidEl = document.getElementById(`current-bid-${id}`);
-        const bidderEl = document.getElementById(`bidder-${id}`);
-        const div = document.getElementById("auction-" + id);
-
-        if (currentBidEl)
-          currentBidEl.textContent = `$${parseFloat(bid).toFixed(2)}`;
-        if (bidderEl) bidderEl.textContent = bidder;
-
-        if (div) {
-          const buttons = div.querySelectorAll(".bid-button");
-          buttons.forEach((button, index) => {
-            const increment = index === 0 ? 1 : 5;
-            const newBid = parseFloat(bid) + increment;
-            button.innerHTML = `<i class="fas fa-plus"></i> $${newBid.toFixed(
-              2
-            )}`;
-            button.onclick = () => quickBid(id, newBid);
-          });
-        }
-
-        if (bidder === username) {
-          showNotification(
-            `You are now the highest bidder on auction ${id}!`,
-            "success"
-          );
-        } else {
-          showNotification(
-            `New bid on auction ${id}: $${bid} by ${bidder}`,
-            "success"
-          );
-        }
-      }
-
-      function endAuction(id, winner, price) {
-        const div = document.getElementById("auction-" + id);
-        if (div) {
-          div.className = "auction ended";
-          const actionsDiv = div.querySelector(".auction-actions");
-          if (actionsDiv) {
-            actionsDiv.innerHTML = `
-                        <div class="winner-badge">
-                            <i class="fas fa-trophy"></i>
-                            Winner: ${winner} | Final: $${parseFloat(
-              price
-            ).toFixed(2)}
-                        </div>
-                    `;
-          }
-
-          if (winner === username) {
-            showNotification(
-              `Congratulations! You won auction ${id} with $${price}!`,
-              "success"
-            );
-          } else {
-            showNotification(
-              `Auction ${id} ended. Winner: ${winner} ($${price})`,
-              "success"
-            );
-          }
-        }
-      }
-
-      function startTimer(auctionId, duration) {
-        let timeLeft = duration;
-        const timerElement = document.getElementById(`timer-${auctionId}`);
-
-        const interval = setInterval(() => {
-          timeLeft--;
-          if (timerElement) {
-            timerElement.textContent = timeLeft + "s";
-            if (timeLeft <= 10) {
-              timerElement.classList.add("urgent");
-            }
-          }
-          if (timeLeft <= 0) {
-            clearInterval(interval);
-          }
-        }, 1000);
-      }
-
-      function quickBid(auctionId, amount) {
-        if (ws && ws.readyState === WebSocket.OPEN) {
-          ws.send(`BID|${auctionId}|${amount}|${username}`);
-          showNotification(
-            `Bid placed: $${amount.toFixed(2)} on auction ${auctionId}`,
-            "success"
-          );
-        } else {
-          showNotification(
-            "Connection lost. Please refresh the page.",
-            "error"
-          );
-        }
-      }
-
-      document
-        .getElementById("createForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-          const name = document.getElementById("name").value.trim();
-          const price = document.getElementById("price").value;
-          const duration = document.getElementById("duration").value;
-
-          if (ws && ws.readyState === WebSocket.OPEN) {
-            ws.send(`CREATE|${name}|${price}|${duration}`);
-            showNotification("Auction created successfully!", "success");
-            document.getElementById("createForm").reset();
-            myAuctions.push({ name, price, duration });
-            updateMyActivity();
-          } else {
-            showNotification(
-              "Connection lost. Please refresh the page.",
-              "error"
-            );
-          }
-        });
-
-      document
-        .getElementById("bidForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-          const id = document.getElementById("bidAuctionId").value;
-          const amount = document.getElementById("bidAmount").value;
-
-          if (ws && ws.readyState === WebSocket.OPEN) {
-            ws.send(`BID|${id}|${amount}|${username}`);
-            showNotification("Bid submitted successfully!", "success");
-            document.getElementById("bidForm").reset();
-            myBids.push({ id, amount });
-            updateMyActivity();
-          } else {
-            showNotification(
-              "Connection lost. Please refresh the page.",
-              "error"
-            );
-          }
-        });
-
-      function updateMyActivity() {
-        const activityLog = document.getElementById("activityLog");
-        let html = "";
-
-        html += '<div class="activity-section">';
-        html += '<h3><i class="fas fa-plus-circle"></i> Auctions Created</h3>';
-        if (myAuctions.length === 0) {
-          html +=
-            '<div class="empty-state" style="padding: 30px;"><i class="fas fa-inbox" style="font-size: 48px;"></i><p>You haven\'t created any auctions yet.</p></div>';
-        } else {
-          myAuctions.forEach((auction) => {
-            html += `
-                        <div class="activity-item">
-                            <div class="activity-icon create">
-                                <i class="fas fa-gavel"></i>
-                            </div>
-                            <div>
-                                <strong>${auction.name}</strong><br>
-                                <small>Starting at ${parseFloat(
-                                  auction.price
-                                ).toFixed(2)} • Duration: ${
-              auction.duration
-            }s</small>
-                            </div>
-                        </div>
-                    `;
-          });
-        }
-        html += "</div>";
-
-        html += '<div class="activity-section">';
-        html += '<h3><i class="fas fa-hand-holding-usd"></i> Bids Placed</h3>';
-        if (myBids.length === 0) {
-          html +=
-            '<div class="empty-state" style="padding: 30px;"><i class="fas fa-inbox" style="font-size: 48px;"></i><p>You haven\'t placed any bids yet.</p></div>';
-        } else {
-          myBids.forEach((bid) => {
-            html += `
-                        <div class="activity-item">
-                            <div class="activity-icon bid">
-                                <i class="fas fa-dollar-sign"></i>
-                            </div>
-                            <div>
-                                <strong>Bid on Auction #${bid.id}</strong><br>
-                                <small>Amount: ${parseFloat(bid.amount).toFixed(
-                                  2
-                                )}</small>
-                            </div>
-                        </div>
-                    `;
-          });
-        }
-        html += "</div>";
-
-        activityLog.innerHTML = html;
-      }
-
-      function showNotification(message, type) {
-        const notification = document.getElementById("notification");
+      // Toast notification
+      function showToast(message, type) {
+        const toast = document.getElementById("toast");
         const icon = type === "success" ? "check-circle" : "exclamation-circle";
-        notification.innerHTML = `<i class="fas fa-${icon}"></i><span>${message}</span>`;
-        notification.className = `notification ${type} show`;
+        toast.innerHTML = `<i class="fas fa-${icon}"></i><span>${message}</span>`;
+        toast.className = `toast ${type} show`;
 
         setTimeout(() => {
-          notification.classList.remove("show");
+          toast.classList.remove("show");
         }, 3000);
       }
 
+      // Initialize
       updateMyActivity();
+
+      // Simulate some initial UDP notifications
+      setTimeout(() => {
+        addUDPNotification(
+          "SYSTEM",
+          "UDP notification system initialized (Port 5003)",
+          "info"
+        );
+      }, 1000);
     </script>
   </body>
 </html>

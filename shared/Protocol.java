@@ -16,6 +16,9 @@ public class Protocol {
     public static final String AUCTION_START_NOTIFICATION = "AUCTION_START_NOTIFICATION";
     public static final String AUCTION_END_NOTIFICATION = "AUCTION_END_NOTIFICATION";
 
+    public static final String GET_BID_HISTORY = "GET_BID_HISTORY";
+    public static final String BID_HISTORY = "BID_HISTORY";
+
     // Helper methods for message formatting
     public static String loginMessage(String username) {
         return LOGIN + "|" + username;
@@ -70,5 +73,13 @@ public class Protocol {
     
     public static String generalNotification(String message) {
         return NOTIFICATION + "|" + message;
+    }
+
+    public static String getBidHistoryMessage(int auctionId) {
+        return GET_BID_HISTORY + "|" + auctionId;
+    }
+
+    public static String bidHistoryMessage(int auctionId, String csvData) {
+        return BID_HISTORY + "|" + auctionId + "|" + csvData;
     }
 }
