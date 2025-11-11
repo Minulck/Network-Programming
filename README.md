@@ -1,6 +1,6 @@
 # 🎯 BidEasy: Real-Time Auction System
 
-**A modern, professional real-time auction platform with beautiful web interface and WebSocket-powered live updates.**
+**A modern, professional real-time auction platform demonstrating advanced Java Network Programming concepts with beautiful web interface and WebSocket-powered live updates.**
 
 ---
 
@@ -29,8 +29,75 @@ java -cp ".;lib\java-websocket-1.5.3.jar;lib\slf4j-api-1.7.36.jar;lib\slf4j-simp
 ### What Happens When You Start:
 
 - ✅ Server compiles automatically
-- ✅ All 3 services start (Web, WebSocket, Console)
+- ✅ All 6 services start (Web, WebSocket, Console, Chat NIO, UDP, SSL/TLS)
 - ✅ Web interface opens at http://localhost:8080
+
+---
+
+## 👥 Group Members and Contributions
+
+This project was developed by a team of 5 members, each implementing distinct network programming features:
+
+### Member 1: Java NIO Chat System
+
+- **Focus**: Real-time private chat using Java NIO (Non-blocking I/O)
+- **Files**: `server/ChatManager.java`, `server/Server.java`, `client/dashboard.html`
+
+### Member 2: UDP Notification Service
+
+- **Focus**: Connectionless messaging for instant notifications
+- **Files**: `server/UDPNotificationService.java`
+
+### Member 3: Multi-threading Server Architecture
+
+- **Focus**: Concurrent client handling with thread-per-client model
+- **Files**: `server/ClientHandler.java`, `server/Server.java`
+
+### Member 4: Secure Connection Management
+
+- **Focus**: SSL/TLS encryption for secure network communication
+- **Files**: `server/SecureConnectionManager.java`, `server.keystore`
+
+### Member 5: Client-Server Communication (Sockets)
+
+- **Focus**: Basic TCP socket communication infrastructure
+- **Files**: `server/Server.java`, `client/Client.java`, `shared/Protocol.java`
+
+---
+
+## 🌐 Network Programming Concepts Demonstrated
+
+This application showcases comprehensive Java network programming techniques:
+
+### 1. **Java NIO (Non-blocking I/O)**
+
+- Non-blocking socket operations with Selector and SelectionKey
+- Efficient handling of multiple concurrent connections
+- Scalable chat system implementation
+
+### 2. **UDP Protocol**
+
+- Connectionless, lightweight messaging
+- Fast broadcasting for notifications
+- Best-effort delivery for non-critical data
+
+### 3. **Multi-threading**
+
+- Thread-per-client architecture for concurrent users
+- Synchronization mechanisms for thread safety
+- Resource management in multi-threaded environment
+
+### 4. **SSL/TLS Security**
+
+- Encrypted network communication
+- Certificate-based authentication
+- Secure data transmission
+
+### 5. **Socket Programming (TCP)**
+
+- Reliable, connection-oriented communication
+- Bidirectional data exchange between clients and server
+- Connection management and error handling
 
 ---
 
@@ -38,12 +105,14 @@ java -cp ".;lib\java-websocket-1.5.3.jar;lib\slf4j-api-1.7.36.jar;lib\slf4j-simp
 
 - 🌐 **Beautiful Web Dashboard** - Modern, responsive interface with smooth animations
 - ⚡ **Real-time Updates** - Instant bid updates across all users via WebSocket
-- 👥 **Multi-user Ready** - Unlimited concurrent users can participate
+- � **Private Chat System** - Real-time messaging using Java NIO (Non-blocking I/O)
+- �👥 **Multi-user Ready** - Unlimited concurrent users can participate
 - ⏱️ **Auto-ending Auctions** - Countdown timers with automatic auction closure
 - 📱 **Mobile Friendly** - Perfect on phones, tablets, and desktops
 - 🎮 **Easy Controls** - Quick bid buttons and intuitive interface
 - 🖥️ **Console Alternative** - Command-line client for advanced users
-- � **Live Notifications** - Beautiful real-time notifications
+- 🔔 **UDP Notifications** - Fast broadcast alerts for auction events
+- 🔒 **SSL/TLS Security** - Encrypted connections for secure communication
 - 📊 **Activity Tracking** - Personal auction and bid history
 
 ---
@@ -106,7 +175,14 @@ java -cp ".;lib\java-websocket-1.5.3.jar;lib\slf4j-api-1.7.36.jar;lib\slf4j-simp
 - Input validation and error handling
 - Success notifications
 
-### 📊 My Activity Tab
+### � Chat (Java NIO) Tab
+
+- Real-time private messaging between users
+- User presence indicators and online status
+- Message history and unread message notifications
+- Non-blocking I/O implementation for scalability
+
+### �📊 My Activity Tab
 
 - Track your created auctions
 - View your bidding history
@@ -124,10 +200,13 @@ java -cp ".;lib\java-websocket-1.5.3.jar;lib\slf4j-api-1.7.36.jar;lib\slf4j-simp
 │   ├── dashboard.html       ← Modern unified web interface
 │   ├── styles.css          ← Beautiful styling
 │   └── Client.java         ← Console client
-├── 📁 server/              ← Java server code (4 files)
+├── 📁 server/              ← Java server code (6 files)
 │   ├── Server.java         ← Main server with WebSocket
+│   ├── ChatManager.java    ← NIO Chat System (Member 1)
 │   ├── AuctionManager.java ← Auction logic
 │   ├── ClientHandler.java  ← Console client handler
+│   ├── UDPNotificationService.java ← UDP Broadcasting (Member 2)
+│   ├── SecureConnectionManager.java ← SSL/TLS Security (Member 4)
 │   └── Auction.java        ← Auction data model
 ├── 📁 shared/              ← Common protocols (2 files)
 │   ├── Protocol.java       ← Message protocols
@@ -143,8 +222,11 @@ java -cp ".;lib\java-websocket-1.5.3.jar;lib\slf4j-api-1.7.36.jar;lib\slf4j-simp
 ## 🌐 Server Ports
 
 - **Port 8080** - Web interface (http://localhost:8080)
-- **Port 5001** - WebSocket connections
-- **Port 5000** - Console client connections
+- **Port 5001** - WebSocket connections (real-time updates)
+- **Port 5000** - Console client connections (TCP)
+- **Port 5002** - Chat server (Java NIO)
+- **Port 5003** - UDP notifications (broadcasting)
+- **Port 5005** - Secure SSL/TLS connections
 
 ---
 
@@ -152,7 +234,7 @@ java -cp ".;lib\java-websocket-1.5.3.jar;lib\slf4j-api-1.7.36.jar;lib\slf4j-simp
 
 - ☕ **Java 8+** (required) - Install from [java.com](https://java.com/download)
 - 🌐 **Modern Web Browser** (Chrome, Firefox, Safari, Edge)
-- 🖥️ **Ports Available**: 5000, 5001, 8080
+- 🖥️ **Ports Available**: 5000, 5001, 5002, 5003, 5005, 8080
 - 💾 **Windows** (batch files included) or adapt for Mac/Linux
 
 ---
@@ -187,7 +269,7 @@ java client.Client
 ### Server Won't Start
 
 - **No Java?** → Install from [java.com](https://java.com/download)
-- **Port busy?** → Close other applications using ports 5000, 5001, 8080
+- **Port busy?** → Close other applications using ports 5000, 5001, 5002, 5003, 5005, 8080
 - **Permission denied?** → Run as Administrator
 - **Compilation failed?** → Check Java version with `java -version`
 
@@ -218,18 +300,48 @@ java client.Client
 ### What Makes This Special:
 
 1. **Real-time Everything** - WebSocket-powered instant updates
-2. **Modern UI** - Clean, professional interface with gradients and animations
-3. **Multi-user Ready** - Unlimited concurrent users
-4. **Mobile Friendly** - Works perfectly on phones and tablets
-5. **Easy Setup** - One-click server startup
-6. **Professional Code** - Clean Java architecture with proper error handling
+2. **Advanced Chat System** - Java NIO-based private messaging
+3. **Modern UI** - Clean, professional interface with gradients and animations
+4. **Multi-user Ready** - Unlimited concurrent users
+5. **Mobile Friendly** - Works perfectly on phones and tablets
+6. **Easy Setup** - One-click server startup
+7. **Professional Code** - Clean Java architecture with proper error handling
 
 ### Technical Stack:
 
 - **Backend**: Java with WebSocket server
 - **Frontend**: Modern HTML5, CSS3, JavaScript
-- **Communication**: WebSocket for real-time updates
+- **Communication**: WebSocket for real-time updates, Java NIO for chat
 - **Architecture**: Multi-threaded server with event-driven client updates
+- **Security**: SSL/TLS encrypted connections
+- **Networking**: TCP sockets, UDP broadcasting, Java NIO, multi-threading
+
+---
+
+## 📋 Project Documentation
+
+### Report and Presentation Materials
+
+- **WORK_DISTRIBUTION.md**: Detailed work allocation for team members
+- **REPORT_README.md**: Complete report template with all required sections
+- **PRESENTATION_README.md**: Presentation guide and slide templates
+
+### Report Sections (as per assignment requirements):
+
+- ✅ Project Title
+- ✅ Group Members and Individual Contributions
+- ✅ System Overview
+- ✅ Network Programming Concepts Used
+- ✅ Screenshots of Outputs
+- ✅ Challenges Faced and Solutions
+- ✅ Conclusion
+
+### Presentation Requirements:
+
+- 10-minute presentation + 5-minute Q&A
+- Each member presents their network programming feature
+- Physical demonstration of the running application
+- No formal attire required
 
 ---
 
