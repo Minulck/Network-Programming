@@ -37,6 +37,12 @@ public class AuctionManager {
                     placeBid(auctionId, amount, bidder, handler);
                 }
                 break;
+            case Protocol.GET_BID_HISTORY:
+                if (parts.length == 2) {
+                    int auctionId = Integer.parseInt(parts[1]);
+                    getBidHistory(auctionId, handler);
+                }
+                break;
             default:
                 handler.sendMessage(Protocol.errorMessage("Unknown command"));
         }
@@ -73,6 +79,7 @@ public class AuctionManager {
         if (a != null && amount > a.getCurrentBid()) {
             a.setCurrentBid(amount);
             a.setHighestBidder(bidder);
+            a.addBidToHistory(bidder, amount);
             Server.broadcast(Protocol.updateMessage(a.getId(), a.getCurrentBid(), a.getHighestBidder()));
             
             // UDP Notification: High bid
@@ -104,6 +111,24 @@ public class AuctionManager {
         UDPNotificationService.notifyAuctionEnded(a.getId(), winner, finalPrice);
         
         // Optional: remove from list
+    }
+
+    public static void getBidHistory(int auctionId, MessageSender handler) {
+        if (auctionId < 0 || auctionId >= auctions.size()) {
+            handler.sendMessage(Protocol.errorMessage("Invalid auction ID"));
+            return;
+        }
+        Auction a = auctions.get(auctionId);
+        if (a == null) {
+            handler.sendMessage(Protocol.errorMessage("Auction not found"));
+            return;
+        }
+        List<Auction.Bid> history = a.getBidHistory();
+        StringBuilder csv = new StringBuilder("Bidder,Amount,Timestamp\n");
+        for (Auction.Bid bid : history) {
+            csv.append(bid.getBidder()).append(",").append(bid.getAmount()).append(",").append(bid.getTimestamp()).append("\n");
+        }
+        handler.sendMessage(Protocol.bidHistoryMessage(auctionId, csv.toString()));
     }
     
     public static List<Auction> getAllAuctions() {

@@ -9,6 +9,8 @@ public class Protocol {
     public static final String END = "END";
     public static final String ERROR = "ERROR";
     public static final String WELCOME = "WELCOME";
+    public static final String GET_BID_HISTORY = "GET_BID_HISTORY";
+    public static final String BID_HISTORY = "BID_HISTORY";
 
     // Helper methods for message formatting
     public static String loginMessage(String username) {
@@ -41,5 +43,13 @@ public class Protocol {
 
     public static String welcomeMessage(String username) {
         return WELCOME + "|" + username;
+    }
+
+    public static String getBidHistoryMessage(int auctionId) {
+        return GET_BID_HISTORY + "|" + auctionId;
+    }
+
+    public static String bidHistoryMessage(int auctionId, String csvData) {
+        return BID_HISTORY + "|" + auctionId + "|" + csvData;
     }
 }

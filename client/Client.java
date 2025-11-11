@@ -2,6 +2,7 @@ package client;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
@@ -31,7 +32,21 @@ public class Client {
                 try {
                     String msg;
                     while ((msg = in.readUTF()) != null) {
-                        System.out.println("Update: " + msg);
+                        if (msg.startsWith(Protocol.BID_HISTORY + "|")) {
+                            String[] parts = msg.split("\\|", 3);
+                            if (parts.length >= 3) {
+                                int auctionId = Integer.parseInt(parts[1]);
+                                String csvData = parts[2];
+                                try (FileWriter writer = new FileWriter("bid_history_" + auctionId + ".csv")) {
+                                    writer.write(csvData);
+                                    System.out.println("Bid history for auction " + auctionId + " saved to bid_history_" + auctionId + ".csv");
+                                } catch (IOException e) {
+                                    System.out.println("Failed to save bid history: " + e.getMessage());
+                                }
+                            }
+                        } else {
+                            System.out.println("Update: " + msg);
+                        }
                     }
                 } catch (IOException e) {
                     System.out.println("Disconnected");
@@ -40,7 +55,7 @@ public class Client {
 
             // Send commands
             while (true) {
-                System.out.print("Command (CREATE name price duration or BID id amount): ");
+                System.out.print("Command (CREATE name price duration, BID id amount, GET_BID_HISTORY id): ");
                 String command = scanner.nextLine();
                 if (command.equals("exit")) break;
                 out.writeUTF(command);
