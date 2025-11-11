@@ -34,14 +34,8 @@ public class Server {
         System.out.println("   BidEasy - Enterprise Auction Platform");
         System.out.println("===========================================");
         
-        // Initialize Connection Pool Manager (Feature 5)
-        ConnectionPoolManager.initialize();
-        
         // Start UDP Notification Service (Feature 2)
         UDPNotificationService.start();
-        
-        // Start File Transfer Service (Feature 3)
-        FileTransferService.start();
         
         // Start Chat Manager with NIO (Feature 1)
         ChatManager.start();
@@ -57,18 +51,11 @@ public class Server {
             try {
                 while (true) {
                     Socket clientSocket = serverSocket.accept();
-                    String clientIP = clientSocket.getInetAddress().getHostAddress();
                     System.out.println("New console client connected: " + clientSocket);
 
                     ClientHandler handler = new ClientHandler(clientSocket, senders);
                     senders.add(handler);
-                    
-                    // Use connection pool (Feature 5)
-                    boolean submitted = ConnectionPoolManager.submitConnection(clientIP, handler);
-                    if (!submitted) {
-                        System.err.println("Connection rejected due to pool limits");
-                        clientSocket.close();
-                    }
+                    new Thread(handler).start();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -78,7 +65,6 @@ public class Server {
         // Add shutdown hook
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("\nShutting down BidEasy Server...");
-            ConnectionPoolManager.shutdown();
             UDPNotificationService.shutdown();
             System.out.println("Server shutdown complete.");
         }));
@@ -171,7 +157,6 @@ public class Server {
         System.out.println("- HTTP: " + HTTP_PORT);
         System.out.println("- Chat (NIO): 5002");
         System.out.println("- UDP Notifications: 5003");
-        System.out.println("- File Transfer: 5004");
         System.out.println("- Secure SSL/TLS: 5005");
         System.out.println("===========================================\n");
     }

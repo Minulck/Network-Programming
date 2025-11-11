@@ -85,6 +85,7 @@ public class ChatManager implements Runnable {
                     broadcastMessage("SYSTEM", username + " left the chat");
                     clients.remove(clientChannel);
                     userChannels.remove(username);
+                    broadcastUserList();
                 }
                 clientChannel.close();
                 return;
@@ -98,11 +99,20 @@ public class ChatManager implements Runnable {
         } catch (IOException e) {
             String username = clients.get(clientChannel);
             if (username != null) {
-                broadcastMessage("SYSTEM", username + " disconnected");
+                try {
+                    broadcastMessage("SYSTEM", username + " disconnected");
+                    broadcastUserList();
+                } catch (IOException ex) {
+                    System.err.println("Error broadcasting disconnect: " + ex.getMessage());
+                }
                 clients.remove(clientChannel);
                 userChannels.remove(username);
             }
-            clientChannel.close();
+            try {
+                clientChannel.close();
+            } catch (IOException ex) {
+                // Ignore
+            }
         }
     }
 
@@ -115,6 +125,10 @@ public class ChatManager implements Runnable {
             clients.put(clientChannel, username);
             userChannels.put(username, clientChannel);
             sendToClient(clientChannel, "CHAT_WELCOME|Welcome to auction chat, " + username + "!");
+            
+            // Send updated user list to all clients
+            broadcastUserList();
+            
             broadcastMessage("SYSTEM", username + " joined the chat");
         } else if (command.equals("CHAT_MSG") && parts.length == 2) {
             String username = clients.get(clientChannel);
@@ -129,6 +143,8 @@ public class ChatManager implements Runnable {
                 String sender = clients.get(clientChannel);
                 sendPrivateMessage(sender, targetUser, privateMsg);
             }
+        } else if (command.equals("CHAT_GET_USERS")) {
+            sendUserList(clientChannel);
         }
     }
 
@@ -145,21 +161,54 @@ public class ChatManager implements Runnable {
 
     private void sendPrivateMessage(String sender, String recipient, String message) throws IOException {
         SocketChannel recipientChannel = userChannels.get(recipient);
-        if (recipientChannel != null) {
+        SocketChannel senderChannel = userChannels.get(sender);
+        
+        if (recipientChannel != null && recipientChannel.isConnected()) {
+            // Send to recipient
             String formattedMsg = "CHAT_PRIVATE|" + sender + "|" + message;
             sendToClient(recipientChannel, formattedMsg);
             
-            // Confirm to sender
-            SocketChannel senderChannel = userChannels.get(sender);
-            if (senderChannel != null) {
-                sendToClient(senderChannel, "CHAT_SYSTEM|Private message sent to " + recipient);
+            // Echo back to sender so they see their sent message
+            if (senderChannel != null && senderChannel.isConnected()) {
+                String echoMsg = "CHAT_PRIVATE_SENT|" + recipient + "|" + message;
+                sendToClient(senderChannel, echoMsg);
+            }
+        } else {
+            // User not found or offline
+            if (senderChannel != null && senderChannel.isConnected()) {
+                sendToClient(senderChannel, "CHAT_ERROR|User " + recipient + " not found or offline");
             }
         }
     }
 
     private void sendToClient(SocketChannel client, String message) throws IOException {
-        ByteBuffer buffer = ByteBuffer.wrap(message.getBytes(StandardCharsets.UTF_8));
+        ByteBuffer buffer = ByteBuffer.wrap((message + "\n").getBytes(StandardCharsets.UTF_8));
         client.write(buffer);
+    }
+    
+    private void sendUserList(SocketChannel clientChannel) throws IOException {
+        StringBuilder userListMsg = new StringBuilder("CHAT_USERS|");
+        for (String username : clients.values()) {
+            userListMsg.append(username).append(",");
+        }
+        sendToClient(clientChannel, userListMsg.toString());
+    }
+    
+    private void broadcastUserList() throws IOException {
+        StringBuilder userListMsg = new StringBuilder("CHAT_USERS|");
+        for (String username : clients.values()) {
+            userListMsg.append(username).append(",");
+        }
+        
+        String message = userListMsg.toString();
+        ByteBuffer buffer = ByteBuffer.wrap((message + "\n").getBytes(StandardCharsets.UTF_8));
+        
+        for (SocketChannel client : clients.keySet()) {
+            if (client.isConnected()) {
+                buffer.rewind();
+                client.write(buffer);
+            }
+        }
     }
 
     public static void start() {
