@@ -182,6 +182,35 @@ public class Server {
                 if (message.startsWith(Protocol.LOGIN + "|")) {
                     username = message.split("\\|")[1];
                     sendMessage(Protocol.welcomeMessage(username));
+                    
+                    System.out.println("WebSocket user " + username + " logged in. Sending existing auctions...");
+                    
+                    // Send all existing ongoing auctions to the newly connected client
+                    List<Auction> existingAuctions = AuctionManager.getAllAuctions();
+                    System.out.println("Found " + existingAuctions.size() + " existing auctions to send");
+                    
+                    for (Auction auction : existingAuctions) {
+                        String auctionMsg = Protocol.newAuctionMessage(
+                            auction.getId(), 
+                            auction.getName(), 
+                            auction.getStartPrice(), 
+                            auction.getDurationSec()
+                        );
+                        System.out.println("Sending auction to WebSocket user " + username + ": " + auctionMsg);
+                        sendMessage(auctionMsg);
+                        
+                        // If there's already a bid on this auction, send an update
+                        if (auction.getHighestBidder() != null) {
+                            String updateMsg = Protocol.updateMessage(
+                                auction.getId(), 
+                                auction.getCurrentBid(), 
+                                auction.getHighestBidder()
+                            );
+                            System.out.println("Sending update to WebSocket user " + username + ": " + updateMsg);
+                            sendMessage(updateMsg);
+                        }
+                    }
+                    
                     // Send initial user list
                     broadcastUserList();
                 } else {

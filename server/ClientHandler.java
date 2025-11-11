@@ -31,6 +31,38 @@ public class ClientHandler implements Runnable, MessageSender {
             if (loginMsg.startsWith(Protocol.LOGIN + "|")) {
                 username = loginMsg.split("\\|")[1];
                 out.writeUTF(Protocol.welcomeMessage(username));
+                out.flush();
+                
+                System.out.println("User " + username + " logged in. Sending existing auctions...");
+                
+                // Send all existing ongoing auctions to the newly connected client
+                List<Auction> existingAuctions = AuctionManager.getAllAuctions();
+                System.out.println("Found " + existingAuctions.size() + " existing auctions to send");
+                
+                for (Auction auction : existingAuctions) {
+                    String auctionMsg = Protocol.newAuctionMessage(
+                        auction.getId(), 
+                        auction.getName(), 
+                        auction.getStartPrice(), 
+                        auction.getDurationSec()
+                    );
+                    System.out.println("Sending auction to " + username + ": " + auctionMsg);
+                    out.writeUTF(auctionMsg);
+                    out.flush();
+                    
+                    // If there's already a bid on this auction, send an update
+                    if (auction.getHighestBidder() != null) {
+                        String updateMsg = Protocol.updateMessage(
+                            auction.getId(), 
+                            auction.getCurrentBid(), 
+                            auction.getHighestBidder()
+                        );
+                        System.out.println("Sending update to " + username + ": " + updateMsg);
+                        out.writeUTF(updateMsg);
+                        out.flush();
+                    }
+                }
+                
                 Server.broadcast(Protocol.welcomeMessage(username)); // optional
             } else {
                 out.writeUTF(Protocol.errorMessage("Invalid login"));
