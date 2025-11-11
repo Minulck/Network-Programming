@@ -1264,19 +1264,11 @@
             </div>
           </div>
           <div style="display: flex; gap: 8px;">
-            <button class="action-button" style="flex: 1;" onclick="quickBid(${id}, ${
-          parseFloat(price) + 1
-        })">
-              <i class="fas fa-plus"></i> Bid $${(
-                parseFloat(price) + 1
-              ).toFixed(2)}
+            <button class="action-button" style="flex: 1;" onclick="quickBidIncrement(${id}, 10)">
+              <i class="fas fa-plus"></i> +$10
             </button>
-            <button class="action-button" style="flex: 1;" onclick="quickBid(${id}, ${
-          parseFloat(price) + 5
-        })">
-              <i class="fas fa-plus"></i> Bid $${(
-                parseFloat(price) + 5
-              ).toFixed(2)}
+            <button class="action-button" style="flex: 1;" onclick="quickBidIncrement(${id}, 50)">
+              <i class="fas fa-plus"></i> +$50
             </button>
           </div>
         `;
@@ -1354,6 +1346,23 @@
         } else {
           showToast("Connection lost. Please refresh the page.", "error");
         }
+      }
+
+      function quickBidIncrement(auctionId, increment) {
+        const currentBidEl = document.getElementById(
+          `current-bid-${auctionId}`
+        );
+        if (!currentBidEl) {
+          showToast("Auction not found", "error");
+          return;
+        }
+
+        // Extract current bid value
+        const currentBidText = currentBidEl.textContent.replace("$", "");
+        const currentBid = parseFloat(currentBidText);
+        const newBid = currentBid + increment;
+
+        quickBid(auctionId, newBid);
       }
 
       // Create auction
