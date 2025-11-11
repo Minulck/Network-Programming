@@ -30,24 +30,58 @@ public class Server {
     private static List<WebSocketHandler> wsHandlers = new CopyOnWriteArrayList<>();
 
     public static void main(String[] args) throws IOException {
+        System.out.println("===========================================");
+        System.out.println("   BidEasy - Enterprise Auction Platform");
+        System.out.println("===========================================");
+        
+        // Initialize Connection Pool Manager (Feature 5)
+        ConnectionPoolManager.initialize();
+        
+        // Start UDP Notification Service (Feature 2)
+        UDPNotificationService.start();
+        
+        // Start File Transfer Service (Feature 3)
+        FileTransferService.start();
+        
+        // Start Chat Manager with NIO (Feature 1)
+        ChatManager.start();
+        
+        // Start Secure Connection Manager (Feature 4)
+        SecureConnectionManager.start(senders);
+        
         // Start socket server for console clients
         ServerSocket serverSocket = new ServerSocket(PORT);
-        System.out.println("BidEasy Server started on port " + PORT);
+        System.out.println("Main Server started on port " + PORT);
 
         new Thread(() -> {
             try {
                 while (true) {
                     Socket clientSocket = serverSocket.accept();
+                    String clientIP = clientSocket.getInetAddress().getHostAddress();
                     System.out.println("New console client connected: " + clientSocket);
 
                     ClientHandler handler = new ClientHandler(clientSocket, senders);
                     senders.add(handler);
-                    new Thread(handler).start();
+                    
+                    // Use connection pool (Feature 5)
+                    boolean submitted = ConnectionPoolManager.submitConnection(clientIP, handler);
+                    if (!submitted) {
+                        System.err.println("Connection rejected due to pool limits");
+                        clientSocket.close();
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }).start();
+        
+        // Add shutdown hook
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("\nShutting down BidEasy Server...");
+            ConnectionPoolManager.shutdown();
+            UDPNotificationService.shutdown();
+            System.out.println("Server shutdown complete.");
+        }));
 
         // Start WebSocket server
         WebSocketServer wsServer = new WebSocketServer(new InetSocketAddress(WS_PORT)) {
@@ -129,6 +163,17 @@ public class Server {
         });
         httpServer.start();
         System.out.println("HTTP server started on port " + HTTP_PORT);
+        
+        System.out.println("\n===========================================");
+        System.out.println("All services started successfully!");
+        System.out.println("- Main Server: " + PORT);
+        System.out.println("- WebSocket: " + WS_PORT);
+        System.out.println("- HTTP: " + HTTP_PORT);
+        System.out.println("- Chat (NIO): 5002");
+        System.out.println("- UDP Notifications: 5003");
+        System.out.println("- File Transfer: 5004");
+        System.out.println("- Secure SSL/TLS: 5005");
+        System.out.println("===========================================\n");
     }
 
     public static void broadcast(String message) {

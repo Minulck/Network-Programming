@@ -2,6 +2,8 @@ package server;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -11,6 +13,8 @@ import shared.Protocol;
 public class AuctionManager {
     private static List<Auction> auctions = new ArrayList<>();
     private static ScheduledExecutorService timer = Executors.newScheduledThreadPool(1);
+    private static Map<Integer, Long> auctionStartTimes = new ConcurrentHashMap<>();
+    private static Map<Integer, Integer> recentBids = new ConcurrentHashMap<>();
 
     public static void processMessage(String message, MessageSender handler) {
         String[] parts = message.split("\\|");
@@ -41,11 +45,23 @@ public class AuctionManager {
     public static void createAuction(String name, double startPrice, int durationSec, MessageSender creator) {
         Auction auction = new Auction(auctions.size(), name, startPrice, durationSec, creator.getUsername());
         auctions.add(auction);
+        auctionStartTimes.put(auction.getId(), System.currentTimeMillis());
+        recentBids.put(auction.getId(), 0);
 
         Server.broadcast(Protocol.newAuctionMessage(auction.getId(), auction.getName(), auction.getStartPrice(), auction.getDurationSec()));
 
+        // UDP Notification: New auction created
+        UDPNotificationService.notifyNewAuction(auction.getName(), startPrice);
+
         // Schedule auto-end
         timer.schedule(() -> endAuction(auction), durationSec, TimeUnit.SECONDS);
+        
+        // Schedule "ending soon" notification (10 seconds before end)
+        if (durationSec > 10) {
+            timer.schedule(() -> {
+                UDPNotificationService.notifyEndingSoon(auction.getId(), auction.getName(), 10);
+            }, durationSec - 10, TimeUnit.SECONDS);
+        }
     }
 
     public static void placeBid(int auctionId, double amount, String bidder, MessageSender handler) {
@@ -58,6 +74,22 @@ public class AuctionManager {
             a.setCurrentBid(amount);
             a.setHighestBidder(bidder);
             Server.broadcast(Protocol.updateMessage(a.getId(), a.getCurrentBid(), a.getHighestBidder()));
+            
+            // UDP Notification: High bid
+            UDPNotificationService.notifyHighBid(auctionId, bidder, amount);
+            
+            // Track recent bids for bidding war detection
+            recentBids.merge(auctionId, 1, Integer::sum);
+            
+            // Check for bidding war (5+ bids in quick succession)
+            if (recentBids.get(auctionId) >= 5) {
+                UDPNotificationService.notifyBiddingWar(auctionId, a.getName(), recentBids.get(auctionId));
+                recentBids.put(auctionId, 0); // Reset counter
+            }
+            
+            // Reset bidding war counter after 60 seconds
+            timer.schedule(() -> recentBids.put(auctionId, 0), 60, TimeUnit.SECONDS);
+            
         } else {
             handler.sendMessage(Protocol.errorMessage("Bid too low"));
         }
@@ -67,6 +99,14 @@ public class AuctionManager {
         String winner = a.getHighestBidder() != null ? a.getHighestBidder() : "No bids";
         double finalPrice = a.getCurrentBid();
         Server.broadcast(Protocol.endAuctionMessage(a.getId(), winner, finalPrice));
+        
+        // UDP Notification: Auction ended
+        UDPNotificationService.notifyAuctionEnded(a.getId(), winner, finalPrice);
+        
         // Optional: remove from list
+    }
+    
+    public static List<Auction> getAllAuctions() {
+        return new ArrayList<>(auctions);
     }
 }
