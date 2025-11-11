@@ -41,27 +41,42 @@ This project was developed by a team of 5 members, each implementing distinct ne
 ### Member 1: Java NIO Chat System
 
 - **Focus**: Real-time private chat using Java NIO (Non-blocking I/O)
+- **Port**: 5002
+- **Technologies**: Selector, SelectionKey, SocketChannel, ServerSocketChannel, ByteBuffer
 - **Files**: `server/ChatManager.java`, `server/Server.java`, `client/dashboard.html`
+- **Features**: Non-blocking chat server, private messaging, user presence tracking, scalable connection handling
 
 ### Member 2: UDP Notification Service
 
 - **Focus**: Connectionless messaging for instant notifications
+- **Port**: 5003
+- **Technologies**: DatagramSocket, DatagramPacket, UDP Broadcasting
 - **Files**: `server/UDPNotificationService.java`
+- **Features**: Broadcast notifications, subscription model, fast messaging for auction events (new auction, bidding war, ending soon, auction ended)
 
 ### Member 3: Multi-threading Server Architecture
 
 - **Focus**: Concurrent client handling with thread-per-client model
+- **Port**: 5000 (Console client TCP connections)
+- **Technologies**: Java Threads, Runnable, CopyOnWriteArrayList
 - **Files**: `server/ClientHandler.java`, `server/Server.java`
+- **Features**: Thread-per-client model, concurrent auction operations, thread-safe collections, synchronized access to shared resources
 
 ### Member 4: Secure Connection Management
 
 - **Focus**: SSL/TLS encryption for secure network communication
+- **Port**: 5005
+- **Technologies**: SSLServerSocket, SSLContext, KeyStore, TrustManager, KeyManager
 - **Files**: `server/SecureConnectionManager.java`, `server.keystore`
+- **Features**: TLS encryption, self-signed certificate generation, strong cipher suites, secure handshake, encrypted bidirectional communication
 
 ### Member 5: Client-Server Communication (Sockets)
 
-- **Focus**: Basic TCP socket communication infrastructure
+- **Focus**: TCP socket communication and WebSocket real-time updates
+- **Ports**: 5000 (TCP), 5001 (WebSocket), 8080 (HTTP)
+- **Technologies**: ServerSocket, Socket, DataInputStream/DataOutputStream, WebSocket, HTTP Server
 - **Files**: `server/Server.java`, `client/Client.java`, `shared/Protocol.java`
+- **Features**: Reliable TCP connections, bidirectional communication, WebSocket for real-time web updates, HTTP server for web interface, protocol-based messaging
 
 ---
 
@@ -221,12 +236,14 @@ This application showcases comprehensive Java network programming techniques:
 
 ## 🌐 Server Ports
 
-- **Port 8080** - Web interface (http://localhost:8080)
-- **Port 5001** - WebSocket connections (real-time updates)
-- **Port 5000** - Console client connections (TCP)
-- **Port 5002** - Chat server (Java NIO)
-- **Port 5003** - UDP notifications (broadcasting)
-- **Port 5005** - Secure SSL/TLS connections
+The system demonstrates 6 distinct network programming concepts on separate ports:
+
+- **Port 8080** - HTTP Server (Web interface) - Member 5
+- **Port 5000** - TCP Socket Server (Console clients) - Member 3 & 5
+- **Port 5001** - WebSocket Server (Real-time web updates) - Member 5
+- **Port 5002** - Java NIO Chat Server (Non-blocking I/O) - Member 1
+- **Port 5003** - UDP Notification Service (Broadcasting) - Member 2
+- **Port 5005** - SSL/TLS Secure Server (Encrypted connections) - Member 4
 
 ---
 
