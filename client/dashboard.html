@@ -924,6 +924,12 @@
         const msg = event.data;
         console.log("Received:", msg);
 
+        // Handle chat messages
+        if (msg.startsWith("CHAT_")) {
+          handleChatMessage(msg);
+          return;
+        }
+
         if (msg.startsWith("WELCOME|")) {
           document.getElementById("login").style.display = "none";
           document.getElementById("main").style.display = "block";
@@ -934,8 +940,11 @@
           const statusEl = document.getElementById("connectionStatus");
           statusEl.className = "connection-status status-online";
           document.getElementById("statusText").textContent = "Online";
-          showToast("Welcome to BidEasy Enhanced!", "success");
+          showToast("Welcome to BidEasy!", "success");
           updateMyActivity();
+
+          // Initialize chat after login
+          setTimeout(() => connectToChat(), 500);
         } else if (msg.startsWith("NEW_AUCTION|")) {
           const parts = msg.split("|");
           addAuction(parts[1], parts[2], parts[3], parts[4]);
@@ -969,68 +978,37 @@
       let chatHistory = {}; // Store chat messages per user
 
       function connectToChat() {
-        try {
-          chatSocket = new WebSocket("ws://localhost:5002");
+        // Use the main WebSocket connection for chat
+        chatSocket = ws;
 
-          chatSocket.onopen = () => {
-            // Login to chat server
-            chatSocket.send("CHAT_LOGIN|" + username);
-            console.log("Connected to NIO chat server");
-          };
-
-          chatSocket.onmessage = (event) => {
-            const msg = event.data.trim();
-            console.log("Chat message:", msg);
-
-            if (msg.startsWith("CHAT_WELCOME|")) {
-              const welcomeMsg = msg.split("|")[1];
-              showChatMessage("system", welcomeMsg);
-            } else if (msg.startsWith("CHAT_USERS|")) {
-              const usersList = msg.split("|")[1];
-              updateUserList(usersList);
-            } else if (msg.startsWith("CHAT_BROADCAST|")) {
-              const parts = msg.split("|");
-              const sender = parts[1];
-              const message = parts[2];
-              if (sender !== "SYSTEM") {
-                // Ignore broadcasts, we only show private messages
-              } else {
-                showChatMessage("system", message);
-              }
-            } else if (msg.startsWith("CHAT_PRIVATE|")) {
-              const parts = msg.split("|");
-              const sender = parts[1];
-              const message = parts[2];
-              receivePrivateMessage(sender, message);
-            } else if (msg.startsWith("CHAT_PRIVATE_SENT|")) {
-              const parts = msg.split("|");
-              const recipient = parts[1];
-              const message = parts[2];
-              showPrivateMessageSent(recipient, message);
-            } else if (msg.startsWith("CHAT_ERROR|")) {
-              const errorMsg = msg.split("|")[1];
-              showToast(errorMsg, "error");
-            } else if (msg.startsWith("CHAT_SYSTEM|")) {
-              const sysMsg = msg.split("|")[1];
-              showChatMessage("system", sysMsg);
-            }
-          };
-
-          chatSocket.onclose = () => {
-            showToast("Chat disconnected", "error");
-            chatSocket = null;
-          };
-
-          chatSocket.onerror = (error) => {
-            console.error("Chat error:", error);
-            showToast("Chat connection error", "error");
-          };
-        } catch (error) {
-          console.error("Failed to connect to chat:", error);
-          showToast("Failed to connect to chat server", "error");
+        if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+          // Request initial user list
+          chatSocket.send("CHAT_GET_USERS");
+          console.log("Chat initialized on main WebSocket");
+        } else {
+          console.error("Main WebSocket not connected");
         }
       }
 
+      function handleChatMessage(msg) {
+        if (msg.startsWith("CHAT_USERS|")) {
+          const usersList = msg.split("|")[1];
+          updateUserList(usersList);
+        } else if (msg.startsWith("CHAT_PRIVATE|")) {
+          const parts = msg.split("|");
+          const sender = parts[1];
+          const message = parts[2];
+          receivePrivateMessage(sender, message);
+        } else if (msg.startsWith("CHAT_PRIVATE_SENT|")) {
+          const parts = msg.split("|");
+          const recipient = parts[1];
+          const message = parts[2];
+          showPrivateMessageSent(recipient, message);
+        } else if (msg.startsWith("CHAT_ERROR|")) {
+          const errorMsg = msg.split("|")[1];
+          showToast(errorMsg, "error");
+        }
+      }
       function updateUserList(usersString) {
         const users = usersString.split(",").filter((u) => u && u !== username);
         onlineUsers = new Set(users);

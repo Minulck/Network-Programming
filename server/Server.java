@@ -101,6 +101,8 @@ public class Server {
                     if (h.conn == conn) {
                         wsHandlers.remove(h);
                         senders.remove(h);
+                        // Broadcast updated user list
+                        broadcastUserList();
                         break;
                     }
                 }
@@ -180,12 +182,66 @@ public class Server {
                 if (message.startsWith(Protocol.LOGIN + "|")) {
                     username = message.split("\\|")[1];
                     sendMessage(Protocol.welcomeMessage(username));
+                    // Send initial user list
+                    broadcastUserList();
                 } else {
                     sendMessage(Protocol.errorMessage("Please login first"));
                 }
             } else {
-                AuctionManager.processMessage(message, this);
+                // Handle chat messages
+                if (message.startsWith("CHAT_")) {
+                    handleChatMessage(message);
+                } else {
+                    // Handle auction messages
+                    AuctionManager.processMessage(message, this);
+                }
             }
+        }
+        
+        private void handleChatMessage(String message) {
+            String[] parts = message.split("\\|", 2);
+            String command = parts[0];
+            
+            if (command.equals("CHAT_GET_USERS")) {
+                sendUserList();
+            } else if (command.equals("CHAT_PRIVATE") && parts.length == 2) {
+                String[] privateParts = parts[1].split("\\|", 2);
+                if (privateParts.length == 2) {
+                    String targetUser = privateParts[0];
+                    String privateMsg = privateParts[1];
+                    sendPrivateMessage(targetUser, privateMsg);
+                }
+            }
+        }
+        
+        private void sendPrivateMessage(String targetUser, String message) {
+            // Find target user
+            WebSocketHandler targetHandler = null;
+            for (WebSocketHandler handler : wsHandlers) {
+                if (targetUser.equals(handler.getUsername())) {
+                    targetHandler = handler;
+                    break;
+                }
+            }
+            
+            if (targetHandler != null) {
+                // Send to recipient
+                targetHandler.sendMessage("CHAT_PRIVATE|" + username + "|" + message);
+                // Echo back to sender
+                sendMessage("CHAT_PRIVATE_SENT|" + targetUser + "|" + message);
+            } else {
+                sendMessage("CHAT_ERROR|User " + targetUser + " not found or offline");
+            }
+        }
+        
+        private void sendUserList() {
+            StringBuilder userList = new StringBuilder("CHAT_USERS|");
+            for (WebSocketHandler handler : wsHandlers) {
+                if (handler.getUsername() != null && !handler.getUsername().equals(username)) {
+                    userList.append(handler.getUsername()).append(",");
+                }
+            }
+            sendMessage(userList.toString());
         }
 
         @Override
@@ -198,6 +254,15 @@ public class Server {
         @Override
         public String getUsername() {
             return username;
+        }
+    }
+    
+    // Broadcast user list to all connected clients
+    public static void broadcastUserList() {
+        for (WebSocketHandler handler : wsHandlers) {
+            if (handler.getUsername() != null) {
+                handler.sendUserList();
+            }
         }
     }
 }
