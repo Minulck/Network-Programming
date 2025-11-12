@@ -6,72 +6,70 @@ BidEasy: Real-Time Auction System - A Java Network Programming Showcase
 
 ## Group Members and Individual Contributions
 
-### Member 1: [Full Name] - Chat System with Java NIO
+### Member 1: [Full Name] - Dashboard and Multi-Bidding Multiple Auction Handling
 
-- **Contribution**: Implemented real-time private chat using Java NIO (Port 5002)
-- **Network Concept**: Non-blocking I/O with Selector, SelectionKey, SocketChannel, ServerSocketChannel, and ByteBuffer
-- **Technologies Used**: java.nio.channels package, ConcurrentHashMap, event-driven architecture
+- **Contribution**: Implemented web dashboard with real-time multi-bidding interface and multiple auction handling
+- **Network Concept**: WebSocket for real-time updates and HTTP for dashboard serving
+- **Technologies Used**: WebSocket (java-websocket library), HTML5, CSS3, JavaScript, com.sun.net.httpserver
 - **Code Sections**:
-  - NIO server setup with ServerSocketChannel
-  - Selector-based event handling for OP_ACCEPT and OP_READ
+  - WebSocket server for real-time bid updates (Port 5001)
+  - HTTP server for serving dashboard files (Port 8080)
+  - Real-time bidding interface with multiple auction support
+  - Bid validation and conflict resolution
+  - Live auction status updates
+- **Challenges**: Real-time synchronization, handling multiple concurrent auctions, WebSocket connection management, UI responsiveness
+
+### Member 2: [Full Name] - Notification and Login Multi-threading UDP
+
+- **Contribution**: Implemented UDP notification service with login system and multi-threading
+- **Network Concept**: UDP broadcasting with multi-threaded subscription management
+- **Technologies Used**: java.net.DatagramSocket, java.net.DatagramPacket, multi-threading, broadcast addressing
+- **Code Sections**:
+  - UDP socket initialization with broadcast enabled (Port 5003)
+  - Multi-threaded subscription listener for client registration
+  - Login authentication system with thread safety
+  - Broadcast methods for auction events and notifications
+  - Thread-safe user session management
+- **Challenges**: UDP reliability, multi-threading synchronization, broadcast permissions, session management
+
+### Member 3: [Full Name] - Auction Creation Using Image
+
+- **Contribution**: Developed auction creation system with image upload and processing
+- **Network Concept**: FTP for image transfer and TCP for auction data
+- **Technologies Used**: FTP server implementation, image processing, TCP sockets, file I/O
+- **Code Sections**:
+  - FTP server for image uploads (integrated with main server)
+  - Image validation and processing
+  - Auction creation with image metadata
+  - File transfer protocol implementation
+  - Image storage and retrieval system
+- **Challenges**: File transfer reliability, image format handling, storage management, network file operations
+
+### Member 4: [Full Name] - Chat System
+
+- **Contribution**: Implemented real-time chat functionality for auction participants
+- **Network Concept**: Java NIO for scalable non-blocking chat server
+- **Technologies Used**: java.nio.channels package, Selector pattern, SocketChannel, ByteBuffer
+- **Code Sections**:
+  - NIO server setup with ServerSocketChannel (Port 5002)
+  - Selector-based event handling for chat connections
   - Non-blocking client connection management
   - Private messaging between users
   - User presence tracking and broadcasting
-- **Challenges**: Managing non-blocking operations, handling connection states, implementing private messaging, proper ByteBuffer management
+- **Challenges**: Non-blocking operations, connection state management, message routing, scalability
 
-### Member 2: [Full Name] - UDP Notification Service
+### Member 5: [Full Name] - Auction Summary and Activity
 
-- **Contribution**: Implemented UDP broadcasting for instant notifications (Port 5003)
-- **Network Concept**: Connectionless protocol for lightweight messaging using DatagramSocket and DatagramPacket
-- **Technologies Used**: java.net.DatagramSocket, broadcast addressing, subscription model
+- **Contribution**: Created auction summary reports and activity monitoring system
+- **Network Concept**: TCP socket communication for data retrieval and reporting
+- **Technologies Used**: TCP sockets, data serialization, logging, report generation
 - **Code Sections**:
-  - UDP socket initialization with broadcast enabled
-  - Subscription listener for client registration
-  - Broadcast methods for various auction events
-  - Multiple notification types (new auction, bidding war, ending soon, auction ended, high bid)
-- **Challenges**: Network configuration, broadcast permissions, handling unreliable delivery, managing subscriber list
-
-### Member 3: [Full Name] - Multi-threading Server Architecture
-
-- **Contribution**: Developed multi-threaded server to handle concurrent console client connections (Port 5000)
-- **Network Concept**: Thread-per-client model for scalable server architecture using Java Threads and Runnable
-- **Technologies Used**: Java Thread API, CopyOnWriteArrayList, Runnable interface, thread-safe collections
-- **Code Sections**:
-  - ClientHandler implementing Runnable for concurrent execution
-  - Thread creation for each accepted client connection
-  - Thread-safe message sender list with CopyOnWriteArrayList
-  - Synchronized auction operations across multiple threads
-  - Proper resource cleanup on client disconnection
-- **Challenges**: Race conditions in auction bidding, thread safety in shared data structures, resource management, preventing deadlocks
-
-### Member 4: [Full Name] - Secure Connection Management
-
-- **Contribution**: Added SSL/TLS encryption to secure network communications (Port 5005)
-- **Network Concept**: Secure Socket Layer/Transport Layer Security using SSLServerSocket and SSLContext
-- **Technologies Used**: javax.net.ssl package, KeyStore (JKS), KeyManagerFactory, TrustManagerFactory, SecureRandom
-- **Code Sections**:
-  - SSL context creation and initialization
-  - KeyStore loading and management (server.keystore)
-  - Self-signed certificate generation using keytool
-  - SSLServerSocket configuration with strong cipher suites
-  - Secure client handler for encrypted communication
-  - SSL session information logging
-- **Challenges**: Keystore creation and management, SSL handshake process, cipher suite selection, performance overhead, certificate validation
-
-### Member 5: [Full Name] - Client-Server Communication (Sockets)
-
-- **Contribution**: Implemented TCP socket communication infrastructure and WebSocket real-time updates
-- **Network Concept**: Socket programming for reliable client-server communication using TCP and WebSocket protocols
-- **Technologies Used**: java.net.ServerSocket, java.net.Socket, DataInputStream/DataOutputStream, WebSocket (java-websocket library), com.sun.net.httpserver
-- **Ports**: 5000 (TCP), 5001 (WebSocket), 8080 (HTTP)
-- **Code Sections**:
-  - ServerSocket initialization for console clients (Port 5000)
-  - WebSocket server for real-time web client updates (Port 5001)
-  - HTTP server for serving web interface (Port 8080)
-  - Protocol.java for standardized message formatting
-  - Bidirectional communication with streams
-  - Client.java console application
-- **Challenges**: Handling connection timeouts, implementing proper error handling, WebSocket handshake, serving static web files, synchronizing updates across different client types
+  - Auction activity logging and tracking
+  - Summary report generation
+  - Activity monitoring interface
+  - Data aggregation and analysis
+  - Real-time activity updates
+- **Challenges**: Data consistency, report generation efficiency, real-time monitoring, data aggregation
 
 ## System Overview
 
@@ -99,59 +97,49 @@ The Real-Time Auction System implements a multi-layered client-server architectu
 
 ## Network Programming Concepts Used
 
-### 1. Socket Programming (TCP)
+### 1. Dashboard and Multi-Bidding Multiple Auction Handling
 
-- **Implementation**: Java Socket API (ServerSocket, Socket) for reliable, connection-oriented communication
-- **Ports**: 5000 (console clients), 5001 (WebSocket)
-- **Components**: Server.java, Client.java, Protocol.java
-- **Purpose**: Bidirectional communication between clients and server for auction operations
-- **Benefits**: Guaranteed delivery, ordered data transmission, connection-oriented reliability
-- **Demonstrates**: Stream-based I/O, connection management, protocol design
+- **Implementation**: WebSocket protocol for real-time updates and HTTP for web interface
+- **Ports**: 8080 (HTTP), 5001 (WebSocket)
+- **Components**: dashboard.html, WebSocket server in Server.java
+- **Purpose**: Real-time bidding interface with multiple auction support
+- **Benefits**: Instant updates, concurrent auction handling, responsive UI
+- **Demonstrates**: WebSocket bidirectional communication, HTTP serving, real-time synchronization
 
-### 2. Multi-threading
+### 2. Notification and Login Multi-threading UDP
 
-- **Implementation**: Thread-per-client model with CopyOnWriteArrayList for thread safety
-- **Port**: 5000
-- **Components**: ClientHandler.java (implements Runnable)
-- **Purpose**: Handle multiple concurrent console users without blocking
-- **Benefits**: Improved responsiveness, scalability, concurrent auction operations
-- **Demonstrates**: Thread creation, Runnable interface, thread-safe collections, resource management
+- **Implementation**: UDP broadcasting with multi-threaded subscription management
+- **Port**: 5003
+- **Components**: UDPNotificationService.java, multi-threaded login system
+- **Purpose**: Fast notifications and secure login with concurrent user handling
+- **Benefits**: Lightweight messaging, scalable notifications, thread-safe authentication
+- **Demonstrates**: UDP connectionless protocol, multi-threading, broadcast addressing, session management
 
-### 3. WebSocket Protocol
+### 3. Auction Creation Using Image
 
-- **Implementation**: Java-WebSocket library (org.java_websocket) for full-duplex communication
-- **Port**: 5001
-- **Components**: WebSocketServer in Server.java, WebSocketHandler class
-- **Purpose**: Real-time bidirectional updates for web clients without HTTP polling
-- **Benefits**: Efficient push-based updates, reduced server load, persistent connections, instant notifications
-- **Demonstrates**: WebSocket handshake, message broadcasting, connection lifecycle management
+- **Implementation**: FTP protocol for image transfer integrated with TCP auction data
+- **Components**: FTPServer.java, image processing in auction creation
+- **Purpose**: Upload and process images for auction items
+- **Benefits**: File transfer reliability, image validation, metadata handling
+- **Demonstrates**: FTP protocol, file I/O over network, image processing, data integration
 
-### 4. Java NIO (Non-blocking I/O)
+### 4. Chat System
 
-- **Implementation**: Selector pattern with SocketChannel and ServerSocketChannel
+- **Implementation**: Java NIO with Selector pattern for non-blocking chat server
 - **Port**: 5002
 - **Components**: ChatManager.java
-- **Purpose**: Scalable non-blocking chat server for private messaging
-- **Benefits**: Single-threaded handling of multiple connections, efficient resource usage, scalability
-- **Demonstrates**: Selector, SelectionKey, event-driven I/O, ByteBuffer operations, non-blocking channels
+- **Purpose**: Real-time messaging between auction participants
+- **Benefits**: Scalable connections, efficient resource usage, private messaging
+- **Demonstrates**: Non-blocking I/O, Selector pattern, event-driven architecture, ByteBuffer operations
 
-### 5. UDP Protocol
+### 5. Auction Summary and Activity
 
-- **Implementation**: DatagramSocket and DatagramPacket for connectionless messaging
-- **Port**: 5003
-- **Components**: UDPNotificationService.java
-- **Purpose**: Fast broadcasting of auction notifications and events
-- **Benefits**: Low overhead, fast transmission, broadcast capability, suitable for non-critical notifications
-- **Demonstrates**: Connectionless communication, broadcast addressing, best-effort delivery, subscription model
-
-### 6. SSL/TLS Security
-
-- **Implementation**: Java Secure Socket Extension (JSSE) with SSLServerSocket and SSLContext
-- **Port**: 5005
-- **Components**: SecureConnectionManager.java, server.keystore
-- **Purpose**: Encrypted communication to protect sensitive auction data
-- **Benefits**: Data confidentiality, integrity, authentication, protection against eavesdropping
-- **Demonstrates**: SSL context configuration, KeyStore management, certificate-based encryption, cipher suite selection, secure handshake
+- **Implementation**: TCP socket communication for data retrieval and reporting
+- **Port**: 5000
+- **Components**: Activity monitoring, report generation system
+- **Purpose**: Track and summarize auction activities and performance
+- **Benefits**: Real-time monitoring, data analysis, comprehensive reporting
+- **Demonstrates**: TCP reliable communication, data aggregation, logging, report generation
 
 ## Screenshots of Outputs
 
