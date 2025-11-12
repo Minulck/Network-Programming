@@ -1,4 +1,4 @@
-package server;
+package server.ftp;
 
 import java.io.*;
 import java.net.*;

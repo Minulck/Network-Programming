@@ -39,7 +39,7 @@ if not exist "lib\slf4j-simple-1.7.36.jar" (
 )
 
 echo Compiling Java files...
-javac -encoding UTF-8 -cp "lib\java-websocket-1.5.3.jar;lib\slf4j-api-1.7.36.jar;lib\slf4j-simple-1.7.36.jar" server\*.java shared\*.java client\Client.java
+javac -encoding UTF-8 -cp "lib\java-websocket-1.5.3.jar;lib\slf4j-api-1.7.36.jar;lib\slf4j-simple-1.7.36.jar" server\auction\*.java server\chat\*.java server\core\*.java server\ftp\*.java server\notifications\*.java server\security\*.java shared\*.java client\Client.java
 
 if %errorlevel% neq 0 (
     echo.
@@ -64,4 +64,4 @@ echo.
 echo Press Ctrl+C to stop the server
 echo.
 
-java -cp ".;lib\java-websocket-1.5.3.jar;lib\slf4j-api-1.7.36.jar;lib\slf4j-simple-1.7.36.jar" server.Server
+java -cp ".;lib\java-websocket-1.5.3.jar;lib\slf4j-api-1.7.36.jar;lib\slf4j-simple-1.7.36.jar" server.core.Server

@@ -1,4 +1,4 @@
-package server;
+package server.notifications;
 
 import java.io.IOException;
 import java.net.*;

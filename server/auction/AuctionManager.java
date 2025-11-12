@@ -1,4 +1,4 @@
-package server;
+package server.auction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import server.core.Server;
+import server.notifications.UDPNotificationService;
 import shared.MessageSender;
 import shared.Protocol;
 

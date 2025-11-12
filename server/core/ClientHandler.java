@@ -1,10 +1,12 @@
-package server;
+package server.core;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
+import server.auction.Auction;
+import server.auction.AuctionManager;
 import shared.MessageSender;
 import shared.Protocol;
 

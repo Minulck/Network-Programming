@@ -5,7 +5,7 @@ echo   Compiling BidEasy Project
 echo ===============================
 echo.
 
-javac -encoding UTF-8 -cp "lib\java-websocket-1.5.3.jar;lib\slf4j-api-1.7.36.jar;lib\slf4j-simple-1.7.36.jar" server\*.java shared\*.java client\Client.java
+javac -encoding UTF-8 -cp "lib\java-websocket-1.5.3.jar;lib\slf4j-api-1.7.36.jar;lib\slf4j-simple-1.7.36.jar" server\auction\*.java server\chat\*.java server\core\*.java server\ftp\*.java server\notifications\*.java server\security\*.java shared\*.java client\Client.java
 
 if %errorlevel% equ 0 (
     echo.

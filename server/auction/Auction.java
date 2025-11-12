@@ -1,4 +1,4 @@
-package server;
+package server.auction;
 
 import java.io.Serializable;
 import java.util.ArrayList;

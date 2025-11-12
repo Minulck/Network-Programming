@@ -1,9 +1,10 @@
-package server;
+package server.security;
 
 import java.io.*;
 import java.security.*;
 import java.util.List;
 import javax.net.ssl.*;
+import server.auction.AuctionManager;
 import shared.MessageSender;
 import shared.Protocol;
 

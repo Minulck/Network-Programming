@@ -1,4 +1,4 @@
-package server;
+package server.core;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -13,6 +13,14 @@ import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 import java.net.InetSocketAddress;
+
+// Server component imports
+import server.auction.AuctionManager;
+import server.chat.ChatManager;
+import server.ftp.FTPServer;
+import server.notifications.UDPNotificationService;
+import server.security.SecureConnectionManager;
+import server.auction.Auction;
 
 // HTTP server
 import com.sun.net.httpserver.HttpServer;
