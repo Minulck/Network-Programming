@@ -44,7 +44,8 @@ public class ClientHandler implements Runnable, MessageSender {
                         auction.getId(), 
                         auction.getName(), 
                         auction.getStartPrice(), 
-                        auction.getDurationSec()
+                        auction.getDurationSec(),
+                        auction.getImageName()
                     );
                     System.out.println("Sending auction to " + username + ": " + auctionMsg);
                     out.writeUTF(auctionMsg);

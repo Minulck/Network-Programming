@@ -39,6 +39,10 @@ public class Protocol {
     public static String newAuctionMessage(int id, String name, double startPrice, int duration) {
         return NEW_AUCTION + "|" + id + "|" + name + "|" + startPrice + "|" + duration;
     }
+    
+    public static String newAuctionMessage(int id, String name, double startPrice, int duration, String imageName) {
+        return NEW_AUCTION + "|" + id + "|" + name + "|" + startPrice + "|" + duration + "|" + (imageName != null ? imageName : "");
+    }
 
     public static String endAuctionMessage(int auctionId, String winner, double finalPrice) {
         return END + "|" + auctionId + "|" + winner + "|" + finalPrice;

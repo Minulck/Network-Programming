@@ -18,6 +18,7 @@ public class Auction implements Serializable {
     private int bidCount;
     private long lastBidTime;
     private List<Bid> bidHistory;
+    private String imageName;
 
     public static class Bid {
         private String bidder;
@@ -52,6 +53,12 @@ public class Auction implements Serializable {
         this.bidCount = 0;
         this.lastBidTime = 0;
         this.bidHistory = new ArrayList<>();
+        this.imageName = null;
+    }
+    
+    public Auction(int id, String name, double startPrice, int durationSec, String creator, String imageName) {
+        this(id, name, startPrice, durationSec, creator);
+        this.imageName = imageName;
     }
 
     // Getters and setters
@@ -72,6 +79,8 @@ public class Auction implements Serializable {
     public int getBidCount() { return bidCount; }
     public long getLastBidTime() { return lastBidTime; }
     public List<Bid> getBidHistory() { return new ArrayList<>(bidHistory); }
+    public String getImageName() { return imageName; }
+    public void setImageName(String imageName) { this.imageName = imageName; }
 
     public void addBidToHistory(String bidder, double amount) {
         bidHistory.add(new Bid(bidder, amount, System.currentTimeMillis()));

@@ -26,7 +26,13 @@ public class AuctionManager {
                     String name = parts[1];
                     double startPrice = Double.parseDouble(parts[2]);
                     int durationSec = Integer.parseInt(parts[3]);
-                    createAuction(name, startPrice, durationSec, handler);
+                    createAuction(name, startPrice, durationSec, handler, null);
+                } else if (parts.length == 5) {
+                    String name = parts[1];
+                    double startPrice = Double.parseDouble(parts[2]);
+                    int durationSec = Integer.parseInt(parts[3]);
+                    String imageName = parts[4];
+                    createAuction(name, startPrice, durationSec, handler, imageName);
                 }
                 break;
             case Protocol.BID:
@@ -48,14 +54,14 @@ public class AuctionManager {
         }
     }
 
-    public static void createAuction(String name, double startPrice, int durationSec, MessageSender creator) {
-        Auction auction = new Auction(auctions.size(), name, startPrice, durationSec, creator.getUsername());
+    public static void createAuction(String name, double startPrice, int durationSec, MessageSender creator, String imageName) {
+        Auction auction = new Auction(auctions.size(), name, startPrice, durationSec, creator.getUsername(), imageName);
         auctions.add(auction);
         auctionStartTimes.put(auction.getId(), System.currentTimeMillis());
         recentBids.put(auction.getId(), 0);
 
-        // Send standard update message
-        Server.broadcast(Protocol.newAuctionMessage(auction.getId(), auction.getName(), auction.getStartPrice(), auction.getDurationSec()));
+        // Send standard update message with image
+        Server.broadcast(Protocol.newAuctionMessage(auction.getId(), auction.getName(), auction.getStartPrice(), auction.getDurationSec(), auction.getImageName()));
 
         // UDP Notification: New auction created
         UDPNotificationService.notifyNewAuction(auction.getName(), startPrice);

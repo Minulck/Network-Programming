@@ -1576,6 +1576,19 @@
               required
             />
           </div>
+          <div class="form-group">
+            <label
+              ><i class="fas fa-image"></i> Auction Image (Optional - FTP
+              Upload)</label
+            >
+            <input
+              type="file"
+              id="auctionImage"
+              accept="image/*"
+              style="padding: 8px"
+            />
+            <div id="imagePreview" style="margin-top: 10px"></div>
+          </div>
           <button type="submit">
             <i class="fas fa-rocket"></i>
             Launch Auction
@@ -1837,7 +1850,8 @@
           setTimeout(() => connectToChat(), 500);
         } else if (msg.startsWith("NEW_AUCTION|")) {
           const parts = msg.split("|");
-          addAuction(parts[1], parts[2], parts[3], parts[4]);
+          const imageName = parts.length > 5 ? parts[5] : "";
+          addAuction(parts[1], parts[2], parts[3], parts[4], imageName);
           addUDPNotification("NEW_AUCTION", `New auction: ${parts[2]}`, "info");
         } else if (msg.startsWith("UPDATE|")) {
           const parts = msg.split("|");
@@ -2117,7 +2131,7 @@
       }
 
       // Auctions
-      function addAuction(id, name, price, duration) {
+      function addAuction(id, name, price, duration, imageName) {
         const auctionsDiv = document.getElementById("auctions");
         if (auctionsDiv.querySelector('[style*="grid-column"]')) {
           auctionsDiv.innerHTML = "";
@@ -2128,7 +2142,22 @@
         div.className = "auction";
         div.setAttribute("data-name", name);
         div.setAttribute("data-starting-price", price);
+
+        // Image section
+        let imageHTML = "";
+        if (imageName && imageName.trim() !== "") {
+          imageHTML = `
+            <div style="margin-bottom: 16px; text-align: center;">
+              <img src="http://localhost:8080/uploads/${imageName}" 
+                   alt="${name}" 
+                   style="max-width: 100%; height: 200px; object-fit: cover; border-radius: 8px; border: 2px solid #2d2d44;"
+                   onerror="this.style.display='none'">
+            </div>
+          `;
+        }
+
         div.innerHTML = `
+          ${imageHTML}
           <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
             <h3 style="color: #667eea;">${name}</h3>
             <span style="background: #2d2d44; padding: 4px 12px; border-radius: 8px; font-size: 12px;">ID: ${id}</span>
@@ -2407,22 +2436,98 @@
       // Create auction
       document
         .getElementById("createForm")
-        .addEventListener("submit", function (e) {
+        .addEventListener("submit", async function (e) {
           e.preventDefault();
           const name = document.getElementById("name").value.trim();
           const price = document.getElementById("price").value;
           const duration = document.getElementById("duration").value;
+          const imageInput = document.getElementById("auctionImage");
+
+          let imageName = "";
+
+          // Upload image via FTP if selected
+          if (imageInput.files && imageInput.files.length > 0) {
+            const file = imageInput.files[0];
+            showToast("Uploading image via FTP...", "success");
+
+            try {
+              imageName = await uploadImageViaFTP(file);
+              showToast("Image uploaded successfully!", "success");
+            } catch (error) {
+              showToast("Image upload failed: " + error, "error");
+              return;
+            }
+          }
 
           if (ws && ws.readyState === WebSocket.OPEN) {
-            ws.send(`CREATE|${name}|${price}|${duration}`);
+            if (imageName) {
+              ws.send(`CREATE|${name}|${price}|${duration}|${imageName}`);
+            } else {
+              ws.send(`CREATE|${name}|${price}|${duration}`);
+            }
             showToast("Auction created successfully!", "success");
             document.getElementById("createForm").reset();
+            document.getElementById("imagePreview").innerHTML = "";
             myAuctions.push({ name, price, duration });
             updateMyActivity();
           } else {
             showToast("Connection lost. Please refresh the page.", "error");
           }
         });
+
+      // Image preview
+      document
+        .getElementById("auctionImage")
+        .addEventListener("change", function (e) {
+          const file = e.target.files[0];
+          const preview = document.getElementById("imagePreview");
+
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              preview.innerHTML = `
+              <div style="text-align: center;">
+                <img src="${e.target.result}" 
+                     alt="Preview" 
+                     style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 2px solid #667eea;">
+                <p style="color: #b0b3b8; font-size: 12px; margin-top: 8px;">
+                  ${file.name} (${(file.size / 1024).toFixed(2)} KB)
+                </p>
+              </div>
+            `;
+            };
+            reader.readAsDataURL(file);
+          } else {
+            preview.innerHTML = "";
+          }
+        });
+
+      // FTP Upload Function using HTTP endpoint (HTTP wraps FTP on backend)
+      async function uploadImageViaFTP(file) {
+        return new Promise((resolve, reject) => {
+          const formData = new FormData();
+          formData.append("file", file);
+
+          fetch("http://localhost:8080/ftp-upload", {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => response.text())
+            .then((result) => {
+              if (result.startsWith("SUCCESS|")) {
+                const filename = result.split("|")[1];
+                resolve(filename);
+              } else if (result.startsWith("ERROR|")) {
+                reject(result.split("|")[1]);
+              } else {
+                reject("Unknown response from server");
+              }
+            })
+            .catch((error) => {
+              reject("Upload failed: " + error.message);
+            });
+        });
+      }
 
       // My Activity
       function updateMyActivity() {
