@@ -1501,6 +1501,9 @@
         <button class="tab" onclick="openTab(event, 'createAuction')">
           <i class="fas fa-plus-circle"></i> Create Auction
         </button>
+        <button class="tab" onclick="openTab(event, 'auctionSummary')">
+          <i class="fas fa-trophy"></i> Auction Summary
+        </button>
         <button class="tab" onclick="openTab(event, 'chatTab')">
           <i class="fas fa-comments"></i> Chat (NIO)
         </button>
@@ -1578,6 +1581,42 @@
             Launch Auction
           </button>
         </form>
+      </div>
+
+      <!-- Auction Summary Tab -->
+      <div id="auctionSummary" class="tab-content">
+        <div class="content-header">
+          <h2><i class="fas fa-trophy"></i> Auction Summary</h2>
+          <span
+            style="
+              background: #2d2d44;
+              padding: 6px 12px;
+              border-radius: 8px;
+              font-size: 13px;
+            "
+          >
+            <i class="fas fa-info-circle"></i> Completed Auctions
+          </span>
+        </div>
+        <div id="completedAuctions" class="auctions-grid">
+          <div
+            style="
+              grid-column: 1/-1;
+              text-align: center;
+              padding: 60px;
+              color: #b0b3b8;
+            "
+          >
+            <i
+              class="fas fa-history"
+              style="font-size: 64px; margin-bottom: 16px; color: #2d2d44"
+            ></i>
+            <p>
+              No completed auctions yet.<br />Completed auctions will appear
+              here with winner details.
+            </p>
+          </div>
+        </div>
       </div>
 
       <!-- Chat Tab (Feature 1 - NIO) -->
@@ -1717,6 +1756,7 @@
       let username;
       let myAuctions = [];
       let myBids = [];
+      let completedAuctions = [];
 
       // Login
       document
@@ -2086,6 +2126,8 @@
         const div = document.createElement("div");
         div.id = "auction-" + id;
         div.className = "auction";
+        div.setAttribute("data-name", name);
+        div.setAttribute("data-starting-price", price);
         div.innerHTML = `
           <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
             <h3 style="color: #667eea;">${name}</h3>
@@ -2168,6 +2210,22 @@
         if (div) {
           div.className = "auction ended";
           div.style.opacity = "0.6";
+
+          // Store completed auction data
+          const auctionName = div.getAttribute("data-name");
+          const startingPrice = div.getAttribute("data-starting-price");
+
+          completedAuctions.push({
+            id: id,
+            name: auctionName,
+            startingPrice: startingPrice,
+            winningBid: price,
+            winner: winner,
+            timestamp: new Date().toLocaleString(),
+          });
+
+          // Update completed auctions display
+          updateCompletedAuctions();
         }
 
         if (winner === username) {
@@ -2175,6 +2233,118 @@
             `🏆 Congratulations! You won auction ${id} with $${price}!`,
             "success"
           );
+        }
+      }
+
+      function updateCompletedAuctions() {
+        const completedDiv = document.getElementById("completedAuctions");
+
+        if (completedAuctions.length === 0) {
+          completedDiv.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 60px; color: #b0b3b8;">
+              <i class="fas fa-history" style="font-size: 64px; margin-bottom: 16px; color: #2d2d44"></i>
+              <p>No completed auctions yet.<br />Completed auctions will appear here with winner details.</p>
+            </div>
+          `;
+          return;
+        }
+
+        completedDiv.innerHTML = "";
+
+        // Display completed auctions in reverse order (newest first)
+        for (let i = completedAuctions.length - 1; i >= 0; i--) {
+          const auction = completedAuctions[i];
+          const div = document.createElement("div");
+          div.className = "auction";
+          div.style.borderLeft = "4px solid #28a745";
+
+          const profit =
+            parseFloat(auction.winningBid) - parseFloat(auction.startingPrice);
+          const hasWinner = auction.winner !== "None";
+
+          div.innerHTML = `
+            <div style="display: flex; justify-content: space-between; margin-bottom: 16px; align-items: center;">
+              <div>
+                <h3 style="color: #667eea; margin-bottom: 4px;">${
+                  auction.name
+                }</h3>
+                <small style="color: #b0b3b8;"><i class="fas fa-clock"></i> ${
+                  auction.timestamp
+                }</small>
+              </div>
+              <span style="background: #28a745; color: white; padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;">
+                <i class="fas fa-check-circle"></i> COMPLETED
+              </span>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; padding: 16px; background: #16213e; border-radius: 8px;">
+              <div>
+                <small style="color: #b0b3b8;"><i class="fas fa-tag"></i> Auction ID</small>
+                <div style="font-size: 16px; font-weight: bold; color: #e4e6eb;">#${
+                  auction.id
+                }</div>
+              </div>
+              <div>
+                <small style="color: #b0b3b8;"><i class="fas fa-dollar-sign"></i> Starting Bid</small>
+                <div style="font-size: 16px; font-weight: bold; color: #e4e6eb;">$${parseFloat(
+                  auction.startingPrice
+                ).toFixed(2)}</div>
+              </div>
+              <div>
+                <small style="color: #b0b3b8;"><i class="fas fa-trophy"></i> Winner</small>
+                <div style="font-size: 16px; font-weight: bold; color: ${
+                  hasWinner ? "#28a745" : "#dc3545"
+                };">
+                  ${hasWinner ? auction.winner : "No Winner"}
+                </div>
+              </div>
+              <div>
+                <small style="color: #b0b3b8;"><i class="fas fa-gavel"></i> Winning Bid</small>
+                <div style="font-size: 16px; font-weight: bold; color: ${
+                  hasWinner ? "#28a745" : "#dc3545"
+                };">
+                  ${
+                    hasWinner
+                      ? "$" + parseFloat(auction.winningBid).toFixed(2)
+                      : "N/A"
+                  }
+                </div>
+              </div>
+            </div>
+            
+            ${
+              hasWinner
+                ? `
+            <div style="background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(40, 167, 69, 0.05)); padding: 12px 16px; border-radius: 8px; border: 1px solid rgba(40, 167, 69, 0.3);">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <small style="color: #b0b3b8;"><i class="fas fa-chart-line"></i> Price Increase</small>
+                  <div style="font-size: 18px; font-weight: bold; color: #28a745;">
+                    +$${profit.toFixed(2)} (${(
+                    (profit / parseFloat(auction.startingPrice)) *
+                    100
+                  ).toFixed(1)}%)
+                  </div>
+                </div>
+                <i class="fas fa-trophy" style="font-size: 32px; color: #FFD700;"></i>
+              </div>
+            </div>
+            `
+                : `
+            <div style="background: rgba(220, 53, 69, 0.1); padding: 12px 16px; border-radius: 8px; border: 1px solid rgba(220, 53, 69, 0.3);">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-times-circle" style="font-size: 24px; color: #dc3545;"></i>
+                <div>
+                  <div style="font-weight: bold; color: #dc3545;">No Bids Received</div>
+                  <small style="color: #b0b3b8;">This auction ended without any bids</small>
+                </div>
+              </div>
+            </div>
+            `
+            }
+          `;
+
+          completedDiv.appendChild(div);
         }
       }
 
